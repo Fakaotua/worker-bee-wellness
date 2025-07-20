@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation'
 import { supabase, Therapist } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import ReviewSystem from '@/components/ReviewSystem'
-import { ArrowLeft, MapPin, Star, Award, Clock } from 'lucide-react'
+import { ArrowLeft, MapPin, Award, Clock } from 'lucide-react'
 import Link from 'next/link'
 import { formatCurrency } from '@/lib/utils'
 
@@ -16,28 +16,28 @@ export default function TherapistProfilePage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    const fetchTherapist = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('therapists')
+          .select('*')
+          .eq('id', therapistId)
+          .eq('status', 'approved')
+          .single()
+        
+        if (error) throw error
+        setTherapist(data)
+      } catch (error) {
+        console.error('Error fetching therapist:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
     if (therapistId) {
       fetchTherapist()
     }
   }, [therapistId])
-
-  const fetchTherapist = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('therapists')
-        .select('*')
-        .eq('id', therapistId)
-        .eq('status', 'approved')
-        .single()
-      
-      if (error) throw error
-      setTherapist(data)
-    } catch (error) {
-      console.error('Error fetching therapist:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const handleBookNow = () => {
     const squareUrl = process.env.NEXT_PUBLIC_SQUARE_APPOINTMENTS_BASE_URL || 'https://squareup.com/appointments/book/'
@@ -60,7 +60,7 @@ export default function TherapistProfilePage() {
       <div className="min-h-screen bg-amber-50 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Therapist Not Found</h2>
-          <p className="text-gray-600 mb-6">The therapist you're looking for doesn't exist or isn't approved yet.</p>
+          <p className="text-gray-600 mb-6">The therapist you&apos;re looking for doesn&apos;t exist or isn&apos;t approved yet.</p>
           <Link href="/">
             <Button className="bg-amber-600 hover:bg-amber-700">
               <ArrowLeft className="w-4 h-4 mr-2" />

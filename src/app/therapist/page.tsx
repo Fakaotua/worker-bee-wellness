@@ -1,10 +1,9 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, User } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
-import { supabase } from '@/lib/supabase'
+import { supabase, Therapist } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Upload, DollarSign, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
@@ -17,7 +16,6 @@ export default function TherapistPage() {
   const [password, setPassword] = useState('')
   const [isLogin, setIsLogin] = useState(true)
   const [authLoading, setAuthLoading] = useState(false)
-  const router = useRouter()
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -37,9 +35,9 @@ export default function TherapistPage() {
       } else {
         await createUserWithEmailAndPassword(auth, email, password)
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Auth error:', error)
-      alert(error.message)
+      alert(error instanceof Error ? error.message : 'Authentication failed')
     } finally {
       setAuthLoading(false)
     }
@@ -187,7 +185,7 @@ export default function TherapistPage() {
 }
 
 function TherapistDashboard({ user }: { user: User }) {
-  const [therapistData, setTherapistData] = useState<any>(null)
+  const [therapistData, setTherapistData] = useState<Therapist | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -326,9 +324,9 @@ function TherapistProfileSetup({ user, onComplete }: { user: User, onComplete: (
 
       if (error) throw error
       onComplete()
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error creating profile:', error)
-      alert('Error creating profile: ' + error.message)
+      alert('Error creating profile: ' + (error instanceof Error ? error.message : 'Unknown error'))
     } finally {
       setLoading(false)
     }
@@ -459,7 +457,7 @@ function TherapistProfileSetup({ user, onComplete }: { user: User, onComplete: (
   )
 }
 
-function TherapistDashboardContent({ therapistData, onSignOut }: { therapistData: any, onSignOut: () => void }) {
+function TherapistDashboardContent({ therapistData, onSignOut }: { therapistData: Therapist, onSignOut: () => void }) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'approved': return 'text-green-600 bg-green-100'

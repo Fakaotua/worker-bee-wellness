@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { MapPin, Star, Users, Shield } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
 export default function Home() {
   const [location, setLocation] = useState<string>('')
@@ -56,8 +57,8 @@ export default function Home() {
             </div>
             <nav className="hidden md:flex space-x-8">
               <a href="#" className="text-gray-600 hover:text-gray-900">For Clients</a>
-              <a href="/therapist" className="text-gray-600 hover:text-gray-900">For Therapists</a>
-              <a href="/admin" className="text-gray-600 hover:text-gray-900">Admin</a>
+              <Link href="/therapist" className="text-gray-600 hover:text-gray-900">For Therapists</Link>
+              <Link href="/admin" className="text-gray-600 hover:text-gray-900">Admin</Link>
             </nav>
           </div>
         </div>
@@ -164,8 +165,8 @@ export default function Home() {
             <div>
               <h4 className="font-semibold mb-4">For Therapists</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="/therapist" className="hover:text-white">Join Our Platform</a></li>
-                <li><a href="/therapist" className="hover:text-white">Dashboard</a></li>
+                <li><Link href="/therapist" className="hover:text-white">Join Our Platform</Link></li>
+                <li><Link href="/therapist" className="hover:text-white">Dashboard</Link></li>
                 <li><a href="#" className="hover:text-white">Earnings</a></li>
               </ul>
             </div>

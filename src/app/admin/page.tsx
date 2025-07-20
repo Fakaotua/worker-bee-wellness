@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { signInWithEmailAndPassword, onAuthStateChanged, User } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import { supabase, Therapist, Review } from '@/lib/supabase'
@@ -10,7 +9,7 @@ import { ArrowLeft, Check, X, Eye, Flag, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 
 export default function AdminPage() {
-  const [user, setUser] = useState<User | null>(null)
+  const [, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -19,7 +18,6 @@ export default function AdminPage() {
   const [reviews, setReviews] = useState<Review[]>([])
   const [activeTab, setActiveTab] = useState<'therapists' | 'reviews'>('therapists')
   const [selectedTherapist, setSelectedTherapist] = useState<Therapist | null>(null)
-  const router = useRouter()
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
