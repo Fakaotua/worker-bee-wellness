@@ -50,16 +50,15 @@ export default function Home() {
       <header className="bg-gray-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-3">
+            <Link href="/" className="flex items-center">
               <Image 
                 src="/logo.png" 
                 alt="Worker Bee Wellness" 
-                width={40} 
-                height={40}
-                className="w-10 h-10"
+                width={48} 
+                height={48}
+                className="w-12 h-12"
               />
-              <h1 className="text-2xl font-bold text-gray-900">Worker Bee Wellness</h1>
-            </div>
+            </Link>
             <nav className="hidden md:flex space-x-8">
               <Link href="/clients" className="text-gray-600 hover:text-blue-600">For Clients</Link>
               <Link href="/therapist" className="text-gray-600 hover:text-blue-600">For Therapists</Link>
@@ -149,15 +148,14 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <div className="flex items-center space-x-3 mb-4">
+              <div className="flex items-center mb-4">
                 <Image 
                   src="/logo.png" 
                   alt="Worker Bee Wellness" 
-                  width={32} 
-                  height={32}
-                  className="w-8 h-8"
+                  width={40} 
+                  height={40}
+                  className="w-10 h-10"
                 />
-                <h3 className="text-xl font-bold">Worker Bee Wellness</h3>
               </div>
               <p className="text-gray-400">Connecting you with licensed massage therapists for quality wellness services.</p>
             </div>

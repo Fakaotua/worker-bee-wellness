@@ -7,6 +7,7 @@ import { supabase, Therapist, Review } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Check, X, Eye, Flag, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function AdminPage() {
   const [, setUser] = useState<User | null>(null)
@@ -190,11 +191,14 @@ export default function AdminPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
-              <Link href="/" className="flex items-center text-blue-600 hover:text-blue-700">
-                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
-                  <span className="text-white font-bold text-sm">WB</span>
-                </div>
-                <span className="font-semibold text-lg">Worker Bee Wellness</span>
+              <Link href="/" className="flex items-center">
+                <Image 
+                  src="/logo.png" 
+                  alt="Worker Bee Wellness" 
+                  width={48} 
+                  height={48}
+                  className="w-12 h-12"
+                />
               </Link>
             </div>
             <div className="flex items-center space-x-4">

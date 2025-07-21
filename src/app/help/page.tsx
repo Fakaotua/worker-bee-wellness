@@ -38,15 +38,14 @@ export default function HelpPage() {
       <header className="bg-gray-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <Link href="/" className="flex items-center space-x-3">
+            <Link href="/" className="flex items-center">
               <Image 
                 src="/logo.png" 
                 alt="Worker Bee Wellness" 
-                width={40} 
-                height={40}
-                className="w-10 h-10"
+                width={48} 
+                height={48}
+                className="w-12 h-12"
               />
-              <h1 className="text-2xl font-bold text-gray-900">Worker Bee Wellness</h1>
             </Link>
             <nav className="hidden md:flex space-x-8">
               <Link href="/clients" className="text-gray-600 hover:text-blue-600">For Clients</Link>

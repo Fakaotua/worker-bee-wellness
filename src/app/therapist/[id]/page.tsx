@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import ReviewSystem from '@/components/ReviewSystem'
 import { ArrowLeft, MapPin, Award, Clock } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { formatCurrency } from '@/lib/utils'
 
 export default function TherapistProfilePage() {
@@ -77,11 +78,14 @@ export default function TherapistProfilePage() {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <Link href="/" className="flex items-center text-blue-600 hover:text-blue-700">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
-                <span className="text-white font-bold text-sm">WB</span>
-              </div>
-              <span className="font-semibold text-lg">Worker Bee Wellness</span>
+            <Link href="/" className="flex items-center">
+              <Image 
+                src="/logo.png" 
+                alt="Worker Bee Wellness" 
+                width={48} 
+                height={48}
+                className="w-12 h-12"
+              />
             </Link>
             <Link href="/" className="text-blue-600 hover:text-blue-700 flex items-center">
               <ArrowLeft className="w-4 h-4 mr-2" />
