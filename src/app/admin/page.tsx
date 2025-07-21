@@ -195,9 +195,9 @@ export default function AdminPage() {
                 <Image 
                   src="/logo.png" 
                   alt="Worker Bee Wellness" 
-                  width={60} 
-                  height={28}
-                  className="h-7"
+                  width={75} 
+                  height={35}
+                  className="h-9"
                 />
               </Link>
             </div>

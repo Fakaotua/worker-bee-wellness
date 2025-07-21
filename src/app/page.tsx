@@ -54,9 +54,9 @@ export default function Home() {
               <Image 
                 src="/logo.png" 
                 alt="Worker Bee Wellness" 
-                width={60} 
-                height={28}
-                className="h-7"
+                width={75} 
+                height={35}
+                className="h-9"
               />
             </Link>
             <nav className="hidden md:flex space-x-8">
