@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, User } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import { supabase, Therapist } from '@/lib/supabase'
@@ -47,7 +47,7 @@ export default function TherapistPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
         </div>
       </div>
@@ -58,7 +58,7 @@ export default function TherapistPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100">
         <div className="max-w-4xl mx-auto px-4 py-16">
-          <Link href="/" className="inline-flex items-center text-amber-600 hover:text-amber-700 mb-8">
+          <Link href="/" className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-8">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Home
           </Link>
@@ -72,24 +72,24 @@ export default function TherapistPage() {
 
           <div className="grid md:grid-cols-3 gap-8 mb-12">
             <div className="bg-white rounded-lg p-6 shadow-lg text-center">
-              <div className="bg-amber-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <DollarSign className="w-8 h-8 text-amber-600" />
+              <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <DollarSign className="w-8 h-8 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Competitive Earnings</h3>
               <p className="text-gray-600">Start at 60% commission, earn up to 80% as you grow with us.</p>
             </div>
             
             <div className="bg-white rounded-lg p-6 shadow-lg text-center">
-              <div className="bg-amber-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="w-8 h-8 text-amber-600" />
+              <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <TrendingUp className="w-8 h-8 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Grow Your Practice</h3>
               <p className="text-gray-600">Access to verified clients and tools to build your reputation.</p>
             </div>
             
             <div className="bg-white rounded-lg p-6 shadow-lg text-center">
-              <div className="bg-amber-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Upload className="w-8 h-8 text-amber-600" />
+              <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <Upload className="w-8 h-8 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Simple Setup</h3>
               <p className="text-gray-600">Quick verification process with secure document upload.</p>
@@ -100,7 +100,7 @@ export default function TherapistPage() {
             <Button 
               onClick={() => setShowLogin(true)}
               size="lg"
-              className="bg-amber-600 hover:bg-amber-700 text-white px-8"
+              className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-8"
             >
               Get Started
             </Button>
@@ -132,7 +132,7 @@ export default function TherapistPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
@@ -145,7 +145,7 @@ export default function TherapistPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
@@ -153,7 +153,7 @@ export default function TherapistPage() {
             <Button 
               type="submit" 
               disabled={authLoading}
-              className="w-full bg-amber-600 hover:bg-amber-700"
+              className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold"
             >
               {authLoading ? 'Loading...' : (isLogin ? 'Sign In' : 'Create Account')}
             </Button>
@@ -162,7 +162,7 @@ export default function TherapistPage() {
           <div className="mt-6 text-center">
             <button
               onClick={() => setIsLogin(!isLogin)}
-              className="text-amber-600 hover:text-amber-700 text-sm"
+              className="text-blue-600 hover:text-blue-700 text-sm"
             >
               {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
             </button>
@@ -188,11 +188,7 @@ function TherapistDashboard({ user }: { user: User }) {
   const [therapistData, setTherapistData] = useState<Therapist | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    fetchTherapistData()
-  }, [user])
-
-  const fetchTherapistData = async () => {
+  const fetchTherapistData = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('therapists')
@@ -210,7 +206,13 @@ function TherapistDashboard({ user }: { user: User }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [user])
+
+  useEffect(() => {
+    if (user) {
+      fetchTherapistData()
+    }
+  }, [user, fetchTherapistData])
 
   const handleSignOut = async () => {
     try {
@@ -224,7 +226,7 @@ function TherapistDashboard({ user }: { user: User }) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading dashboard...</p>
         </div>
       </div>
@@ -347,7 +349,7 @@ function TherapistProfileSetup({ user, onComplete }: { user: User, onComplete: (
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
@@ -360,7 +362,7 @@ function TherapistProfileSetup({ user, onComplete }: { user: User, onComplete: (
                 value={formData.bio}
                 onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Tell clients about your experience, approach, and what makes you unique..."
                 required
               />
@@ -446,7 +448,7 @@ function TherapistProfileSetup({ user, onComplete }: { user: User, onComplete: (
             <Button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-amber-600 hover:bg-amber-700"
+              className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold"
             >
               {loading ? 'Creating Profile...' : 'Submit for Review'}
             </Button>
@@ -512,7 +514,7 @@ function TherapistDashboardContent({ therapistData, onSignOut }: { therapistData
                     <h4 className="font-medium text-gray-900 mb-2">Specialties</h4>
                     <div className="flex flex-wrap gap-2">
                       {therapistData.specialties.map((specialty: string) => (
-                        <span key={specialty} className="px-2 py-1 bg-amber-100 text-amber-800 rounded-md text-sm">
+                        <span key={specialty} className="px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-sm">
                           {specialty}
                         </span>
                       ))}
@@ -560,7 +562,7 @@ function TherapistDashboardContent({ therapistData, onSignOut }: { therapistData
                   <h4 className="font-medium text-gray-900 mb-2">Next Tier Progress</h4>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div 
-                      className="bg-amber-600 h-2 rounded-full" 
+                      className="bg-blue-600 h-2 rounded-full" 
                       style={{ width: '25%' }}
                     ></div>
                   </div>

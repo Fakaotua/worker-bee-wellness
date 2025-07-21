@@ -124,9 +124,9 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-amber-50 flex items-center justify-center">
+      <div className="min-h-screen bg-blue-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
         </div>
       </div>
@@ -135,10 +135,10 @@ export default function AdminPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-amber-50 flex items-center justify-center">
+      <div className="min-h-screen bg-blue-50 flex items-center justify-center">
         <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
           <div className="text-center mb-6">
-            <Link href="/" className="inline-flex items-center text-amber-600 hover:text-amber-700 mb-4">
+            <Link href="/" className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-4">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Home
             </Link>
@@ -156,7 +156,7 @@ export default function AdminPage() {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
@@ -170,12 +170,12 @@ export default function AdminPage() {
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
 
-            <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-700">
+            <Button type="submit" className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold">
               Sign In
             </Button>
           </form>
@@ -185,13 +185,13 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-amber-50">
+    <div className="min-h-screen bg-blue-50">
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
-              <Link href="/" className="flex items-center text-amber-600 hover:text-amber-700">
-                <div className="w-8 h-8 bg-amber-600 rounded-full flex items-center justify-center mr-3">
+              <Link href="/" className="flex items-center text-blue-600 hover:text-blue-700">
+                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
                   <span className="text-white font-bold text-sm">WB</span>
                 </div>
                 <span className="font-semibold text-lg">Worker Bee Wellness</span>
@@ -224,7 +224,7 @@ export default function AdminPage() {
                 onClick={() => setActiveTab('therapists')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'therapists'
-                    ? 'border-amber-500 text-amber-600'
+                    ? 'border-blue-500 text-blue-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -234,7 +234,7 @@ export default function AdminPage() {
                 onClick={() => setActiveTab('reviews')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'reviews'
-                    ? 'border-amber-500 text-amber-600'
+                    ? 'border-blue-500 text-blue-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >

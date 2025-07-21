@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { MapPin, Star, Users, Shield } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function Home() {
   const [location, setLocation] = useState<string>('')
@@ -44,21 +45,25 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100">
       {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm">🐝</span>
-              </div>
+            <div className="flex items-center space-x-3">
+              <Image 
+                src="/logo.png" 
+                alt="Worker Bee Wellness" 
+                width={40} 
+                height={40}
+                className="w-10 h-10"
+              />
               <h1 className="text-2xl font-bold text-gray-900">Worker Bee Wellness</h1>
             </div>
             <nav className="hidden md:flex space-x-8">
-              <a href="#" className="text-gray-600 hover:text-gray-900">For Clients</a>
-              <Link href="/therapist" className="text-gray-600 hover:text-gray-900">For Therapists</Link>
-              <Link href="/admin" className="text-gray-600 hover:text-gray-900">Admin</Link>
+              <Link href="/clients" className="text-gray-600 hover:text-blue-600">For Clients</Link>
+              <Link href="/therapist" className="text-gray-600 hover:text-blue-600">For Therapists</Link>
+              <Link href="/admin" className="text-gray-600 hover:text-blue-600">Admin</Link>
             </nav>
           </div>
         </div>
@@ -69,7 +74,7 @@ export default function Home() {
         <div className="text-center">
           <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
             Professional Massage Therapy
-            <span className="block text-amber-600">At Your Fingertips</span>
+            <span className="block text-blue-600">At Your Fingertips</span>
           </h2>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
             Connect with licensed massage therapists in your area. Quality wellness services 
@@ -79,7 +84,7 @@ export default function Home() {
           {/* Location Detection */}
           <div className="bg-white rounded-lg shadow-lg p-6 max-w-md mx-auto mb-8">
             <div className="flex items-center justify-center mb-4">
-              <MapPin className="w-6 h-6 text-amber-600 mr-2" />
+              <MapPin className="w-6 h-6 text-blue-600 mr-2" />
               <span className="text-lg font-semibold">Find Therapists Near You</span>
             </div>
             
@@ -104,7 +109,7 @@ export default function Home() {
             <Button 
               onClick={handleBookNow}
               size="lg"
-              className="w-full bg-amber-600 hover:bg-amber-700 text-white"
+              className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold"
             >
               Book Now
             </Button>
@@ -114,7 +119,7 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-8 mt-16">
             <div className="text-center">
               <div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <Shield className="w-8 h-8 text-amber-600" />
+                <Shield className="w-8 h-8 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Licensed Professionals</h3>
               <p className="text-gray-600">All therapists are verified, licensed, and insured for your safety and peace of mind.</p>
@@ -122,7 +127,7 @@ export default function Home() {
             
             <div className="text-center">
               <div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <Star className="w-8 h-8 text-amber-600" />
+                <Star className="w-8 h-8 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Quality Guaranteed</h3>
               <p className="text-gray-600">Read reviews from real clients and choose therapists with proven track records.</p>
@@ -130,7 +135,7 @@ export default function Home() {
             
             <div className="text-center">
               <div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <Users className="w-8 h-8 text-amber-600" />
+                <Users className="w-8 h-8 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Easy Booking</h3>
               <p className="text-gray-600">Simple, secure booking process with flexible scheduling to fit your lifestyle.</p>
@@ -144,10 +149,14 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">🐝</span>
-                </div>
+              <div className="flex items-center space-x-3 mb-4">
+                <Image 
+                  src="/logo.png" 
+                  alt="Worker Bee Wellness" 
+                  width={32} 
+                  height={32}
+                  className="w-8 h-8"
+                />
                 <h3 className="text-xl font-bold">Worker Bee Wellness</h3>
               </div>
               <p className="text-gray-400">Connecting you with licensed massage therapists for quality wellness services.</p>
@@ -156,9 +165,9 @@ export default function Home() {
             <div>
               <h4 className="font-semibold mb-4">For Clients</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white">Book a Session</a></li>
-                <li><a href="#" className="hover:text-white">Find Therapists</a></li>
-                <li><a href="#" className="hover:text-white">Reviews</a></li>
+                <li><Link href="/clients" className="hover:text-white">Book a Session</Link></li>
+                <li><Link href="/clients" className="hover:text-white">Find Therapists</Link></li>
+                <li><Link href="/reviews" className="hover:text-white">Reviews</Link></li>
               </ul>
             </div>
             
@@ -167,16 +176,16 @@ export default function Home() {
               <ul className="space-y-2 text-gray-400">
                 <li><Link href="/therapist" className="hover:text-white">Join Our Platform</Link></li>
                 <li><Link href="/therapist" className="hover:text-white">Dashboard</Link></li>
-                <li><a href="#" className="hover:text-white">Earnings</a></li>
+                <li><Link href="/therapist" className="hover:text-white">Earnings</Link></li>
               </ul>
             </div>
             
             <div>
               <h4 className="font-semibold mb-4">Support</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white">Help Center</a></li>
-                <li><a href="#" className="hover:text-white">Contact Us</a></li>
-                <li><a href="#" className="hover:text-white">Privacy Policy</a></li>
+                <li><Link href="/help" className="hover:text-white">Help Center</Link></li>
+                <li><Link href="/contact" className="hover:text-white">Contact Us</Link></li>
+                <li><Link href="/privacy" className="hover:text-white">Privacy Policy</Link></li>
               </ul>
             </div>
           </div>

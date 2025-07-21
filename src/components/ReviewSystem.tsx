@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { supabase, Review } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Star, Flag, MessageSquare } from 'lucide-react'
@@ -20,11 +20,7 @@ export default function ReviewSystem({ therapistId, showAddReview = true }: Revi
     clientName: ''
   })
 
-  useEffect(() => {
-    fetchReviews()
-  }, [therapistId])
-
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('reviews')
@@ -40,7 +36,11 @@ export default function ReviewSystem({ therapistId, showAddReview = true }: Revi
     } finally {
       setLoading(false)
     }
-  }
+  }, [therapistId])
+
+  useEffect(() => {
+    fetchReviews()
+  }, [fetchReviews])
 
   const submitReview = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -149,7 +149,7 @@ export default function ReviewSystem({ therapistId, showAddReview = true }: Revi
           <Button
             onClick={() => setShowReviewForm(true)}
             size="sm"
-            className="bg-amber-600 hover:bg-amber-700"
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold"
           >
             Write Review
           </Button>
@@ -168,7 +168,7 @@ export default function ReviewSystem({ therapistId, showAddReview = true }: Revi
                 type="text"
                 value={newReview.clientName}
                 onChange={(e) => setNewReview({ ...newReview, clientName: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
@@ -190,14 +190,14 @@ export default function ReviewSystem({ therapistId, showAddReview = true }: Revi
                 value={newReview.comment}
                 onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Share your experience..."
                 required
               />
             </div>
 
             <div className="flex space-x-3">
-              <Button type="submit" className="bg-amber-600 hover:bg-amber-700">
+              <Button type="submit" className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold">
                 Submit Review
               </Button>
               <Button

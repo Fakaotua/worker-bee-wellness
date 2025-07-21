@@ -46,9 +46,9 @@ export default function TherapistProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-amber-50 flex items-center justify-center">
+      <div className="min-h-screen bg-blue-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading therapist profile...</p>
         </div>
       </div>
@@ -57,12 +57,12 @@ export default function TherapistProfilePage() {
 
   if (!therapist) {
     return (
-      <div className="min-h-screen bg-amber-50 flex items-center justify-center">
+      <div className="min-h-screen bg-blue-50 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Therapist Not Found</h2>
           <p className="text-gray-600 mb-6">The therapist you&apos;re looking for doesn&apos;t exist or isn&apos;t approved yet.</p>
           <Link href="/">
-            <Button className="bg-amber-600 hover:bg-amber-700">
+            <Button className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Home
             </Button>
@@ -73,17 +73,17 @@ export default function TherapistProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-amber-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100">
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <Link href="/" className="flex items-center text-amber-600 hover:text-amber-700">
-              <div className="w-8 h-8 bg-amber-600 rounded-full flex items-center justify-center mr-3">
+            <Link href="/" className="flex items-center text-blue-600 hover:text-blue-700">
+              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
                 <span className="text-white font-bold text-sm">WB</span>
               </div>
               <span className="font-semibold text-lg">Worker Bee Wellness</span>
             </Link>
-            <Link href="/" className="text-amber-600 hover:text-amber-700 flex items-center">
+            <Link href="/" className="text-blue-600 hover:text-blue-700 flex items-center">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Search
             </Link>
@@ -96,7 +96,7 @@ export default function TherapistProfilePage() {
           <div className="p-8">
             <div className="flex flex-col md:flex-row gap-8">
               <div className="flex-shrink-0">
-                <div className="w-32 h-32 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center">
+                <div className="w-32 h-32 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
                   <span className="text-white text-4xl font-bold">
                     {therapist.name.split(' ').map(n => n[0]).join('')}
                   </span>
@@ -112,7 +112,7 @@ export default function TherapistProfilePage() {
                       <span>Licensed Massage Therapist</span>
                     </div>
                     <div className="flex items-center">
-                      <Award className="w-4 h-4 mr-1 text-amber-600" />
+                      <Award className="w-4 h-4 mr-1 text-blue-600" />
                       <span className="text-sm text-gray-600">Verified Professional</span>
                     </div>
                   </div>
@@ -121,7 +121,7 @@ export default function TherapistProfilePage() {
                     <Button 
                       onClick={handleBookNow}
                       size="lg"
-                      className="bg-amber-600 hover:bg-amber-700 w-full md:w-auto"
+                      className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold w-full md:w-auto"
                     >
                       <Clock className="w-4 h-4 mr-2" />
                       Book Session
@@ -140,7 +140,7 @@ export default function TherapistProfilePage() {
                     {therapist.specialties.map((specialty, index) => (
                       <span
                         key={index}
-                        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-800"
+                        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
                       >
                         {specialty}
                       </span>
@@ -149,20 +149,20 @@ export default function TherapistProfilePage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                  <div className="bg-amber-50 p-4 rounded-lg text-center">
-                    <div className="text-2xl font-bold text-amber-600 mb-1">
+                  <div className="bg-blue-50 p-4 rounded-lg text-center">
+                    <div className="text-2xl font-bold text-blue-600 mb-1">
                       {formatCurrency(therapist.total_earnings)}
                     </div>
                     <div className="text-sm text-gray-600">Total Earnings</div>
                   </div>
-                  <div className="bg-amber-50 p-4 rounded-lg text-center">
-                    <div className="text-2xl font-bold text-amber-600 mb-1">
+                  <div className="bg-blue-50 p-4 rounded-lg text-center">
+                    <div className="text-2xl font-bold text-blue-600 mb-1">
                       Tier {therapist.commission_tier}
                     </div>
                     <div className="text-sm text-gray-600">Commission Level</div>
                   </div>
-                  <div className="bg-amber-50 p-4 rounded-lg text-center">
-                    <div className="text-2xl font-bold text-amber-600 mb-1">
+                  <div className="bg-blue-50 p-4 rounded-lg text-center">
+                    <div className="text-2xl font-bold text-blue-600 mb-1">
                       {new Date(therapist.created_at).getFullYear()}
                     </div>
                     <div className="text-sm text-gray-600">Member Since</div>
