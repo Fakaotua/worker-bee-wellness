@@ -69,9 +69,9 @@ export default function ReviewsPage() {
               <Image 
                 src="/logo.png" 
                 alt="Worker Bee Wellness" 
-                width={48} 
-                height={48}
-                className="w-12 h-12"
+                width={60} 
+                height={28}
+                className="h-7"
               />
             </Link>
             <nav className="hidden md:flex space-x-8">

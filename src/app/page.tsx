@@ -54,9 +54,9 @@ export default function Home() {
               <Image 
                 src="/logo.png" 
                 alt="Worker Bee Wellness" 
-                width={48} 
-                height={48}
-                className="w-12 h-12"
+                width={60} 
+                height={28}
+                className="h-7"
               />
             </Link>
             <nav className="hidden md:flex space-x-8">
@@ -152,9 +152,9 @@ export default function Home() {
                 <Image 
                   src="/logo.png" 
                   alt="Worker Bee Wellness" 
-                  width={40} 
-                  height={40}
-                  className="w-10 h-10"
+                  width={51} 
+                  height={24}
+                  className="h-6"
                 />
               </div>
               <p className="text-gray-400">Connecting you with licensed massage therapists for quality wellness services.</p>

@@ -82,9 +82,9 @@ export default function TherapistProfilePage() {
               <Image 
                 src="/logo.png" 
                 alt="Worker Bee Wellness" 
-                width={48} 
-                height={48}
-                className="w-12 h-12"
+                width={60} 
+                height={28}
+                className="h-7"
               />
             </Link>
             <Link href="/" className="text-blue-600 hover:text-blue-700 flex items-center">
