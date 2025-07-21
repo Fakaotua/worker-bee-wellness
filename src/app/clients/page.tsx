@@ -70,8 +70,8 @@ export default function ClientsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100">
-      <header className="bg-white shadow-sm">
+    <div className="min-h-screen bg-white">
+      <header className="bg-gray-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <Link href="/" className="flex items-center space-x-3">
@@ -94,11 +94,11 @@ export default function ClientsPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Find Your Perfect <span className="text-blue-600">Massage Therapist</span>
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+        <div className="text-center mb-16">
+          <h1 className="text-6xl md:text-7xl font-bold text-gray-900 mb-6">
+            Find Your Perfect <span className="text-gray-900">Massage Therapist</span>
+          </h1>
+          <p className="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
             Browse our network of licensed, verified massage therapists and book your session today.
           </p>
         </div>
@@ -130,15 +130,15 @@ export default function ClientsPage() {
           <Button 
             onClick={() => handleBookNow()}
             size="lg"
-            className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold"
+            className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold rounded-full px-12 py-6 text-lg"
           >
             <Search className="w-4 h-4 mr-2" />
             Find Therapists
           </Button>
         </div>
 
-        <div className="mb-8">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6">Featured Therapists</h3>
+        <div className="mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">Featured Therapists</h2>
           
           {loading ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -196,7 +196,7 @@ export default function ClientsPage() {
                     </Link>
                     <Button 
                       onClick={() => handleBookNow(therapist.id)}
-                      className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold"
+                      className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold rounded-full px-8 py-3"
                     >
                       <Clock className="w-4 h-4 mr-2" />
                       Book Session

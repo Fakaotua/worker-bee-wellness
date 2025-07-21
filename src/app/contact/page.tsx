@@ -35,8 +35,8 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100">
-      <header className="bg-white shadow-sm">
+    <div className="min-h-screen bg-white">
+      <header className="bg-gray-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <Link href="/" className="flex items-center space-x-3">
@@ -59,41 +59,41 @@ export default function ContactPage() {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Contact <span className="text-blue-600">Us</span>
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+        <div className="text-center mb-16">
+          <h1 className="text-6xl md:text-7xl font-bold text-gray-900 mb-6">
+            Contact <span className="text-gray-900">Us</span>
+          </h1>
+          <p className="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
             Have questions or need support? We&apos;re here to help you with your wellness journey.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-white rounded-lg shadow-sm p-6 text-center">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Phone className="w-6 h-6 text-blue-600" />
+        <div className="grid md:grid-cols-3 gap-8 mb-16">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+            <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Phone className="w-8 h-8 text-yellow-600" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Phone Support</h3>
-            <p className="text-gray-600 mb-4">Speak with our support team</p>
-            <p className="text-blue-600 font-semibold">(555) 123-4567</p>
+            <h3 className="text-xl font-semibold mb-3 text-gray-900">Phone Support</h3>
+            <p className="text-gray-600 mb-4 text-lg">Speak with our support team</p>
+            <p className="text-gray-900 font-semibold text-lg">(555) 123-4567</p>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6 text-center">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Mail className="w-6 h-6 text-blue-600" />
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+            <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Mail className="w-8 h-8 text-yellow-600" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Email Support</h3>
-            <p className="text-gray-600 mb-4">Send us your questions</p>
-            <p className="text-blue-600 font-semibold">support@workerbeewellness.com</p>
+            <h3 className="text-xl font-semibold mb-3 text-gray-900">Email Support</h3>
+            <p className="text-gray-600 mb-4 text-lg">Send us your questions</p>
+            <p className="text-gray-900 font-semibold text-lg">support@workerbeewellness.com</p>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6 text-center">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Clock className="w-6 h-6 text-blue-600" />
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+            <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Clock className="w-8 h-8 text-yellow-600" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Support Hours</h3>
-            <p className="text-gray-600 mb-4">We&apos;re here to help</p>
-            <p className="text-blue-600 font-semibold">Mon-Fri 9AM-6PM EST</p>
+            <h3 className="text-xl font-semibold mb-3 text-gray-900">Support Hours</h3>
+            <p className="text-gray-600 mb-4 text-lg">We&apos;re here to help</p>
+            <p className="text-gray-900 font-semibold text-lg">Mon-Fri 9AM-6PM EST</p>
           </div>
         </div>
 
@@ -242,7 +242,7 @@ export default function ContactPage() {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-3"
+                    className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold py-4 px-8 rounded-full text-lg disabled:opacity-50"
                   >
                     {isSubmitting ? (
                       <>

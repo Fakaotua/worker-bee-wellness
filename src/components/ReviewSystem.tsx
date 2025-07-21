@@ -149,7 +149,7 @@ export default function ReviewSystem({ therapistId, showAddReview = true }: Revi
           <Button
             onClick={() => setShowReviewForm(true)}
             size="sm"
-            className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold"
+            className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold rounded-full px-6 py-2"
           >
             Write Review
           </Button>
@@ -197,13 +197,14 @@ export default function ReviewSystem({ therapistId, showAddReview = true }: Revi
             </div>
 
             <div className="flex space-x-3">
-              <Button type="submit" className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold">
+              <Button type="submit" className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold rounded-full px-8 py-3">
                 Submit Review
               </Button>
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setShowReviewForm(false)}
+                className="rounded-full px-6 py-3 border-gray-300 text-gray-700 hover:bg-gray-50"
               >
                 Cancel
               </Button>

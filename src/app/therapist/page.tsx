@@ -56,16 +56,16 @@ export default function TherapistPage() {
 
   if (!user && !showLogin) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100">
+      <div className="min-h-screen bg-white">
         <div className="max-w-4xl mx-auto px-4 py-16">
           <Link href="/" className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-8">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Home
           </Link>
           
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Join Worker Bee Wellness</h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <div className="text-center mb-16">
+            <h1 className="text-6xl md:text-7xl font-bold text-gray-900 mb-6">Join Worker Bee Wellness</h1>
+            <p className="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
               Become a verified massage therapist on our platform and start earning with flexible scheduling.
             </p>
           </div>
@@ -100,7 +100,7 @@ export default function TherapistPage() {
             <Button 
               onClick={() => setShowLogin(true)}
               size="lg"
-              className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-8"
+              className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold rounded-full px-12 py-6 text-lg"
             >
               Get Started
             </Button>
@@ -153,7 +153,7 @@ export default function TherapistPage() {
             <Button 
               type="submit" 
               disabled={authLoading}
-              className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold"
+              className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold rounded-full px-8 py-3"
             >
               {authLoading ? 'Loading...' : (isLogin ? 'Sign In' : 'Create Account')}
             </Button>
@@ -448,7 +448,7 @@ function TherapistProfileSetup({ user, onComplete }: { user: User, onComplete: (
             <Button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold"
+              className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold rounded-full px-8 py-3"
             >
               {loading ? 'Creating Profile...' : 'Submit for Review'}
             </Button>
@@ -479,8 +479,8 @@ function TherapistDashboardContent({ therapistData, onSignOut }: { therapistData
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm">
+    <div className="min-h-screen bg-white">
+      <header className="bg-gray-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold text-gray-900">Therapist Dashboard</h1>

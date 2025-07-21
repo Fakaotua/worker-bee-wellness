@@ -7,8 +7,8 @@ import Image from 'next/image'
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100">
-      <header className="bg-white shadow-sm">
+    <div className="min-h-screen bg-white">
+      <header className="bg-gray-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <Link href="/" className="flex items-center space-x-3">
@@ -31,14 +31,14 @@ export default function PrivacyPage() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Privacy <span className="text-blue-600">Policy</span>
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+        <div className="text-center mb-16">
+          <h1 className="text-6xl md:text-7xl font-bold text-gray-900 mb-6">
+            Privacy <span className="text-gray-900">Policy</span>
+          </h1>
+          <p className="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
             Your privacy is important to us. Learn how we collect, use, and protect your information.
           </p>
-          <p className="text-sm text-gray-500 mt-4">Last updated: January 2024</p>
+          <p className="text-sm text-gray-500 mt-6">Last updated: January 2024</p>
         </div>
 
         <div className="grid md:grid-cols-4 gap-6 mb-12">
@@ -71,9 +71,9 @@ export default function PrivacyPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-8 space-y-8">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 md:p-12 space-y-12">
           <section>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Information We Collect</h3>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Information We Collect</h2>
             <div className="space-y-4 text-gray-700">
               <div>
                 <h4 className="font-semibold text-gray-900 mb-2">Personal Information</h4>
