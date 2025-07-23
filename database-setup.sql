@@ -95,6 +95,37 @@ INSERT INTO therapists (user_id, name, bio, specialties, status, commission_tier
 ('sample-user-2', 'Michael Chen', 'Certified therapeutic massage specialist focusing on injury recovery and chronic pain management. With a background in physical therapy, I provide targeted treatments that help clients return to their active lifestyles. I believe in personalized care for each individual.', ARRAY['Therapeutic', 'Injury Recovery', 'Trigger Point'], 'approved', 3, 4200.00),
 ('sample-user-3', 'Emma Rodriguez', 'Holistic wellness practitioner offering relaxation and prenatal massage services. I create a calming environment where clients can unwind and reconnect with their bodies. My gentle approach is perfect for stress relief and overall wellness maintenance.', ARRAY['Relaxation', 'Prenatal', 'Hot Stone'], 'pending', 1, 800.00);
 
+CREATE TABLE IF NOT EXISTS public.event_requests (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  client_name TEXT NOT NULL,
+  client_email TEXT NOT NULL,
+  location_city TEXT NOT NULL,
+  location_state TEXT NOT NULL,
+  preferred_date DATE NOT NULL,
+  preferred_time TIME NOT NULL,
+  notes TEXT, -- additional notes (optional)
+  status TEXT NOT NULL DEFAULT 'pending', -- e.g. 'pending', 'responded', 'accepted'
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  responded_by UUID[] DEFAULT '{}'::UUID[], -- array of user IDs who responded (if any)
+  accepted_by UUID -- user ID who accepted the event (if any)
+);
+
+CREATE INDEX IF NOT EXISTS idx_event_requests_status ON event_requests(status);
+CREATE INDEX IF NOT EXISTS idx_event_requests_location ON event_requests(location_city, location_state);
+CREATE INDEX IF NOT EXISTS idx_event_requests_date ON event_requests(preferred_date);
+
+ALTER TABLE event_requests ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Anyone can create event requests" ON event_requests
+    FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Public can view event requests" ON event_requests
+    FOR SELECT USING (true);
+
+CREATE POLICY "Therapists can respond to events" ON event_requests
+    FOR UPDATE USING (true)
+    WITH CHECK (true);
+
 INSERT INTO reviews (therapist_id, client_name, rating, comment) VALUES
 ((SELECT id FROM therapists WHERE name = 'Sarah Johnson'), 'Jennifer M.', 5, 'Amazing deep tissue massage! Sarah really knew how to work out all the knots in my shoulders. Highly recommend!'),
 ((SELECT id FROM therapists WHERE name = 'Sarah Johnson'), 'David K.', 4, 'Great experience overall. Very professional and the massage was exactly what I needed after my workout.'),

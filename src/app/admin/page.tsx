@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from 'react'
 import { signInWithEmailAndPassword, onAuthStateChanged, User } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
-import { supabase, Therapist, Review } from '@/lib/supabase'
+import { supabase, Therapist, Review, EventRequest } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, Check, X, Eye, Flag, MessageSquare } from 'lucide-react'
+import { ArrowLeft, Check, X, Eye, Flag, MessageSquare, Calendar } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -17,7 +17,8 @@ export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [therapists, setTherapists] = useState<Therapist[]>([])
   const [reviews, setReviews] = useState<Review[]>([])
-  const [activeTab, setActiveTab] = useState<'therapists' | 'reviews'>('therapists')
+  const [eventRequests, setEventRequests] = useState<EventRequest[]>([])
+  const [activeTab, setActiveTab] = useState<'therapists' | 'reviews' | 'events'>('therapists')
   const [selectedTherapist, setSelectedTherapist] = useState<Therapist | null>(null)
 
   useEffect(() => {
@@ -28,6 +29,7 @@ export default function AdminPage() {
         setIsAuthenticated(true)
         fetchTherapists()
         fetchReviews()
+        fetchEventRequests()
       }
     })
 
@@ -60,6 +62,20 @@ export default function AdminPage() {
       setReviews(data || [])
     } catch (error) {
       console.error('Error fetching reviews:', error)
+    }
+  }
+
+  const fetchEventRequests = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('event_requests')
+        .select('*')
+        .order('created_at', { ascending: false })
+      
+      if (error) throw error
+      setEventRequests(data || [])
+    } catch (error) {
+      console.error('Error fetching event requests:', error)
     }
   }
 
@@ -120,6 +136,23 @@ export default function AdminPage() {
       fetchReviews()
     } catch (error) {
       console.error('Error deleting review:', error)
+    }
+  }
+
+  const updateEventStatus = async (eventId: string, status: 'pending' | 'responded' | 'accepted') => {
+    try {
+      const { error } = await supabase
+        .from('event_requests')
+        .update({ 
+          status,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', eventId)
+      
+      if (error) throw error
+      fetchEventRequests()
+    } catch (error) {
+      console.error('Error updating event status:', error)
     }
   }
 
@@ -243,6 +276,16 @@ export default function AdminPage() {
                 }`}
               >
                 Flagged Reviews ({reviews.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('events')}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'events'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Event Requests ({eventRequests.filter(e => e.status === 'pending').length})
               </button>
             </nav>
           </div>
@@ -381,6 +424,79 @@ export default function AdminPage() {
                           Delete
                         </Button>
                       </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+
+            {activeTab === 'events' && (
+              <div className="space-y-6">
+                {eventRequests.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No Event Requests</h3>
+                    <p className="text-gray-600">No event requests to review at this time.</p>
+                  </div>
+                ) : (
+                  eventRequests.map((eventRequest) => (
+                    <div key={eventRequest.id} className="border border-gray-200 rounded-lg p-6">
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900">{eventRequest.client_name}</h3>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {eventRequest.client_email} • Requested on {new Date(eventRequest.created_at).toLocaleDateString()}
+                          </p>
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mt-2 ${
+                            eventRequest.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                            eventRequest.status === 'responded' ? 'bg-blue-100 text-blue-800' :
+                            'bg-green-100 text-green-800'
+                          }`}>
+                            {eventRequest.status.toUpperCase()}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <p className="text-sm font-medium text-gray-700">Location</p>
+                          <p className="text-sm text-gray-600 mt-1">{eventRequest.location_city}, {eventRequest.location_state}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-700">Preferred Date & Time</p>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {eventRequest.preferred_date} at {eventRequest.preferred_time}
+                          </p>
+                        </div>
+                      </div>
+
+                      {eventRequest.notes && (
+                        <div className="mb-4">
+                          <p className="text-sm font-medium text-gray-700">Notes</p>
+                          <p className="text-sm text-gray-600 mt-1">{eventRequest.notes}</p>
+                        </div>
+                      )}
+
+                      {eventRequest.status === 'pending' && (
+                        <div className="flex space-x-3">
+                          <Button
+                            size="sm"
+                            onClick={() => updateEventStatus(eventRequest.id, 'responded')}
+                            className="bg-blue-600 hover:bg-blue-700"
+                          >
+                            <Check className="w-4 h-4 mr-2" />
+                            Mark as Responded
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={() => updateEventStatus(eventRequest.id, 'accepted')}
+                            className="bg-green-600 hover:bg-green-700"
+                          >
+                            <Check className="w-4 h-4 mr-2" />
+                            Mark as Accepted
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   ))
                 )}

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { MapPin, Star, Clock, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { supabase, Therapist } from '@/lib/supabase'
+import EventBookingForm from '@/components/EventBookingForm'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -213,6 +214,19 @@ export default function ClientsPage() {
               <p className="text-gray-600">Check back soon as we add more licensed professionals to our network.</p>
             </div>
           )}
+        </div>
+
+        <div className="mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">Request an Event</h2>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-semibold text-gray-900 mb-4">Book Massage Therapy for Your Event</h3>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                Planning a corporate wellness event, spa party, or group session? Submit your request and licensed therapists in your area will be notified.
+              </p>
+            </div>
+            <EventBookingForm />
+          </div>
         </div>
       </main>
     </div>

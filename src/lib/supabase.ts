@@ -43,3 +43,18 @@ export interface Earning {
   payout_date?: string
   created_at: string
 }
+
+export interface EventRequest {
+  id: string
+  client_name: string
+  client_email: string
+  location_city: string
+  location_state: string
+  preferred_date: string
+  preferred_time: string
+  notes?: string
+  status: 'pending' | 'responded' | 'accepted'
+  created_at: string
+  responded_by: string[]
+  accepted_by?: string
+}
