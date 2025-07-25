@@ -167,7 +167,7 @@ export default function TherapistProfilePage() {
                   </div>
                   <div className="bg-blue-50 p-4 rounded-lg text-center">
                     <div className="text-2xl font-bold text-blue-600 mb-1">
-                      {new Date(therapist.created_at).getFullYear()}
+                      {therapist.created_at ? new Date(therapist.created_at).getFullYear() : 'N/A'}
                     </div>
                     <div className="text-sm text-gray-600">Member Since</div>
                   </div>

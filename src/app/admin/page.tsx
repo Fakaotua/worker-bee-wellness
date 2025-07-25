@@ -305,7 +305,7 @@ export default function AdminPage() {
                       <div className="flex justify-between items-start mb-4">
                         <div>
                           <h3 className="text-lg font-semibold text-gray-900">{therapist.name}</h3>
-                          <p className="text-sm text-gray-600 mt-1">Applied on {new Date(therapist.created_at).toLocaleDateString()}</p>
+                          <p className="text-sm text-gray-600 mt-1">Applied on {therapist.created_at ? new Date(therapist.created_at).toLocaleDateString() : 'Unknown date'}</p>
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mt-2 ${
                             therapist.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                             therapist.status === 'approved' ? 'bg-green-100 text-green-800' :

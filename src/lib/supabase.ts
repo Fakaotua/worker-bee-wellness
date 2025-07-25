@@ -7,7 +7,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 export interface Therapist {
   id: string
-  user_id: string
+  user_id?: string
   name: string
   bio: string
   profile_photo_url?: string
@@ -17,10 +17,13 @@ export interface Therapist {
   specialties: string[]
   status: 'pending' | 'approved' | 'rejected' | 'needs_edits'
   admin_notes?: string
-  commission_tier: number
+  commission_tier?: number
   total_earnings: number
-  created_at: string
-  updated_at: string
+  created_at?: string
+  updated_at?: string
+  hourly_rate?: number
+  location?: string
+  profile_image?: string
 }
 
 export interface Review {

@@ -30,6 +30,37 @@ export default function ClientsPage() {
       setTherapists(data || [])
     } catch (error) {
       console.error('Error fetching therapists:', error)
+      if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
+        setTherapists([
+          {
+            id: 'demo-1',
+            name: 'Sarah Johnson',
+            bio: 'Licensed massage therapist with 8+ years experience specializing in deep tissue and Swedish massage.',
+            specialties: ['Deep Tissue', 'Swedish', 'Sports Massage'],
+            status: 'approved',
+            total_earnings: 15000,
+            location: 'Austin, TX'
+          },
+          {
+            id: 'demo-2',
+            name: 'Michael Chen',
+            bio: 'Certified therapeutic massage specialist focusing on injury recovery and relaxation therapy.',
+            specialties: ['Therapeutic', 'Hot Stone', 'Aromatherapy'],
+            status: 'approved',
+            total_earnings: 12500,
+            location: 'Dallas, TX'
+          },
+          {
+            id: 'demo-3',
+            name: 'Emily Rodriguez',
+            bio: 'Experienced prenatal and wellness massage therapist with holistic approach to healing.',
+            specialties: ['Prenatal', 'Wellness', 'Reflexology'],
+            status: 'approved',
+            total_earnings: 11000,
+            location: 'Houston, TX'
+          }
+        ])
+      }
     } finally {
       setLoading(false)
     }

@@ -553,7 +553,7 @@ function TherapistDashboardContent({ therapistData, onSignOut }: { therapistData
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">Current Rate</span>
                     <span className="font-semibold text-green-600">
-                      {(60 + (therapistData.commission_tier - 1) * 5)}%
+                      {therapistData.commission_tier ? (60 + (therapistData.commission_tier - 1) * 5) : 60}%
                     </span>
                   </div>
                 </div>
