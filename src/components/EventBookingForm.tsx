@@ -26,6 +26,9 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
     e.preventDefault()
     setIsSubmitting(true)
 
+    console.log('Demo mode environment variable:', process.env.NEXT_PUBLIC_DEMO_MODE)
+    console.log('Demo mode check result:', process.env.NEXT_PUBLIC_DEMO_MODE === 'true')
+
     if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
       setTimeout(() => {
         setSubmitted(true)
