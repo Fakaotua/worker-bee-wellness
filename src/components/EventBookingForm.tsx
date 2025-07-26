@@ -25,25 +25,7 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-    
-    if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
-      setTimeout(() => {
-        setSubmitted(true)
-        setFormData({
-          clientName: '',
-          clientEmail: '',
-          locationCity: '',
-          locationState: '',
-          preferredDate: '',
-          preferredTime: '',
-          notes: ''
-        })
-        setIsSubmitting(false)
-        if (onSuccess) onSuccess()
-      }, 1000)
-      return
-    }
-    
+
     try {
       const { error } = await supabase
         .from('event_requests')
@@ -57,9 +39,9 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
           notes: formData.notes,
           status: 'pending'
         })
-      
+
       if (error) throw error
-      
+
       setSubmitted(true)
       setFormData({
         clientName: '',
@@ -70,7 +52,7 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
         preferredTime: '',
         notes: ''
       })
-      
+
       if (onSuccess) onSuccess()
     } catch (error) {
       console.error('Error submitting event request:', error)
@@ -95,10 +77,7 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
         </div>
         <h3 className="text-xl font-semibold text-gray-900 mb-2">Event Request Submitted!</h3>
         <p className="text-gray-600">
-          {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' 
-            ? 'Demo: Thank you for your request! (This is a demo - no data was actually saved)'
-            : 'Thank you for your request. Therapists in your area will be notified and may contact you soon.'
-          }
+          Thank you for your request. Therapists in your area will be notified and may contact you soon.
         </p>
       </div>
     )
@@ -118,8 +97,8 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
             name="clientName"
             value={formData.clientName}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             required
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -134,8 +113,8 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
             name="clientEmail"
             value={formData.clientEmail}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             required
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
       </div>
@@ -152,8 +131,8 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
             name="locationCity"
             value={formData.locationCity}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             required
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -167,9 +146,9 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
             name="locationState"
             value={formData.locationState}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="e.g., NY, CA, TX"
+            placeholder="e.g., AZ"
             required
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
       </div>
@@ -186,8 +165,8 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
             name="preferredDate"
             value={formData.preferredDate}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             required
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -202,8 +181,9 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
             name="preferredTime"
             value={formData.preferredTime}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             required
+            pattern="[0-9]{2}:[0-9]{2}"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
       </div>
@@ -218,7 +198,7 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
           value={formData.notes}
           onChange={handleChange}
           rows={4}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Any specific requirements, preferences, or details about your event..."
         />
       </div>
