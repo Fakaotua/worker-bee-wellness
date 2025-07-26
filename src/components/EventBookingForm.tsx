@@ -26,6 +26,24 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
     e.preventDefault()
     setIsSubmitting(true)
 
+    if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
+      setTimeout(() => {
+        setSubmitted(true)
+        setFormData({
+          clientName: '',
+          clientEmail: '',
+          locationCity: '',
+          locationState: '',
+          preferredDate: '',
+          preferredTime: '',
+          notes: ''
+        })
+        setIsSubmitting(false)
+        if (onSuccess) onSuccess()
+      }, 1000)
+      return
+    }
+
     try {
       const { error } = await supabase
         .from('event_requests')
@@ -80,7 +98,10 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
         </div>
         <h3 className="text-xl font-semibold text-gray-900 mb-2">Event Request Submitted!</h3>
         <p className="text-gray-600">
-          Thank you for your request. Therapists in your area will be notified and may contact you soon.
+          {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' 
+            ? 'Demo: Thank you for your request! (This is a demo - no data was actually saved)'
+            : 'Thank you for your request. Therapists in your area will be notified and may contact you soon.'
+          }
         </p>
       </div>
     )
