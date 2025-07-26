@@ -62,10 +62,13 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
     }
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [name]: value
     }))
   }
 
@@ -84,7 +87,8 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form noValidate onSubmit={handleSubmit} className="space-y-6">
+      {/* Client Info */}
       <div className="grid md:grid-cols-2 gap-6">
         <div>
           <label htmlFor="clientName" className="block text-sm font-medium text-gray-700 mb-2">
@@ -101,7 +105,6 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-
         <div>
           <label htmlFor="clientEmail" className="block text-sm font-medium text-gray-700 mb-2">
             <Mail className="w-4 h-4 inline mr-1" />
@@ -119,6 +122,7 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
         </div>
       </div>
 
+      {/* Location */}
       <div className="grid md:grid-cols-2 gap-6">
         <div>
           <label htmlFor="locationCity" className="block text-sm font-medium text-gray-700 mb-2">
@@ -135,7 +139,6 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-
         <div>
           <label htmlFor="locationState" className="block text-sm font-medium text-gray-700 mb-2">
             State
@@ -146,13 +149,14 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
             name="locationState"
             value={formData.locationState}
             onChange={handleChange}
-            placeholder="e.g., AZ"
             required
+            placeholder="e.g., AZ"
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
       </div>
 
+      {/* Date & Time (no longer required temporarily) */}
       <div className="grid md:grid-cols-2 gap-6">
         <div>
           <label htmlFor="preferredDate" className="block text-sm font-medium text-gray-700 mb-2">
@@ -165,11 +169,10 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
             name="preferredDate"
             value={formData.preferredDate}
             onChange={handleChange}
-            required
+            /* required */
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-
         <div>
           <label htmlFor="preferredTime" className="block text-sm font-medium text-gray-700 mb-2">
             <Clock className="w-4 h-4 inline mr-1" />
@@ -181,13 +184,13 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
             name="preferredTime"
             value={formData.preferredTime}
             onChange={handleChange}
-            required
-            pattern="[0-9]{2}:[0-9]{2}"
+            /* required */
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
       </div>
 
+      {/* Notes (no longer required temporarily) */}
       <div>
         <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-2">
           Additional Notes (Optional)
@@ -198,11 +201,13 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
           value={formData.notes}
           onChange={handleChange}
           rows={4}
+          /* required */
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Any specific requirements, preferences, or details about your event..."
         />
       </div>
 
+      {/* Submit */}
       <Button
         type="submit"
         disabled={isSubmitting}
@@ -210,7 +215,7 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
       >
         {isSubmitting ? (
           <>
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black mr-2"></div>
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black mr-2" />
             Submitting Request...
           </>
         ) : (
