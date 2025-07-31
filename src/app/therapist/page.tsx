@@ -351,18 +351,6 @@ function TherapistDashboardContent({ therapistData, onSignOut }: { therapistData
             </div>
           </div>
         </div>
-
-        {/* New sections outside the grid */}
-        <div className="mt-8">
-          <h2 className="text-lg font-semibold mb-2">Earnings History</h2>
-          <TherapistEarningsHistory therapistId={therapistData.id} />
-        </div>
-        <div className="mt-8">
-          <h2 className="text-lg font-semibold mb-2">Event Requests</h2>
-          <TherapistEventRequests therapistId={therapistData.id} />
-        </div>
-      </main>
-    </div>
   );
 }
       } else {
