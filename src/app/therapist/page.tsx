@@ -1,5 +1,7 @@
 'use client'
 
+import TherapistEventRequests from '@/components/TherapistEventRequests';
+import TherapistEarningsHistory from '@/components/TherapistEarningsHistory';
 import React, { useState, useEffect, useCallback } from 'react'
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, User } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
@@ -533,6 +535,15 @@ function TherapistDashboardContent({ therapistData, onSignOut }: { therapistData
           </div>
 
           {/* Earnings Dashboard */}
+         <div className="mt-8">
+  <h2 className="text-lg font-semibold mb-2">Earnings History</h2>
+  <TherapistEarningsHistory therapistId={therapistData.id} />
+</div>
+<div className="mt-8">
+  <h2 className="text-lg font-semibold mb-2">Event Requests</h2>
+  <TherapistEventRequests therapistId={therapistData.id} />
+</div>
+
           <div>
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-xl font-semibold mb-4">Earnings Overview</h2>
