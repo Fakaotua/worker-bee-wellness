@@ -572,18 +572,19 @@ function TherapistDashboardContent({ therapistData, onSignOut }: { therapistData
                   <p className="text-xs text-gray-600 mt-1">
                     ${therapistData.total_earnings || 0} / $1,000 to next tier
                   </p>
-              <div className="mt-8">
-  <h2 className="text-lg font-semibold mb-2">Earnings History</h2>
-  <TherapistEarningsHistory therapistId={therapistData.id} />
-</div>
-<div className="mt-8">
-  <h2 className="text-lg font-semibold mb-2">Event Requests</h2>
-  <TherapistEventRequests therapistId={therapistData.id} />
-</div>
-       </div>
+                </div>
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="mt-8">
+          <h2 className="text-lg font-semibold mb-2">Earnings History</h2>
+          <TherapistEarningsHistory therapistId={therapistData.id} />
+        </div>
+        <div className="mt-8">
+          <h2 className="text-lg font-semibold mb-2">Event Requests</h2>
+          <TherapistEventRequests therapistId={therapistData.id} />
         </div>
       </main>
     </div>
