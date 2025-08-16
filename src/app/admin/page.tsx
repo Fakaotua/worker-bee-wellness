@@ -18,7 +18,7 @@ export default function AdminPage() {
   const [therapists, setTherapists] = useState<Therapist[]>([])
   const [reviews, setReviews] = useState<Review[]>([])
   const [eventRequests, setEventRequests] = useState<EventRequest[]>([])
-  const [activeTab, setActiveTab] = useState<'therapists' | 'reviews' | 'events'>('therapists')
+  const [activeTab, setActiveTab] = useState<'therapists' | 'reviews' | 'events' | 'create-profile'>('therapists')
   const [selectedTherapist, setSelectedTherapist] = useState<Therapist | null>(null)
 
   useEffect(() => {
@@ -287,6 +287,16 @@ export default function AdminPage() {
               >
                 Event Requests ({eventRequests.filter(e => e.status === 'pending').length})
               </button>
+              <button
+                onClick={() => setActiveTab('create-profile')}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'create-profile'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Create Profile
+              </button>
             </nav>
           </div>
 
@@ -500,6 +510,122 @@ export default function AdminPage() {
                     </div>
                   ))
                 )}
+              </div>
+            )}
+
+            {activeTab === 'create-profile' && (
+              <div className="max-w-2xl">
+                <div className="mb-6">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-2">Create Therapist Profile</h2>
+                  <p className="text-gray-600">Create a new therapist profile that will be accessible to both admin and therapist roles.</p>
+                </div>
+                
+                <div className="bg-white border border-gray-200 rounded-lg p-6">
+                  <form className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Full Name
+                        </label>
+                        <input
+                          type="text"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Enter therapist name"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          User ID (Firebase UID)
+                        </label>
+                        <input
+                          type="text"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Enter Firebase user ID"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Bio (minimum 150 characters)
+                      </label>
+                      <textarea
+                        rows={4}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Enter therapist bio and experience..."
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Specialties
+                      </label>
+                      <input
+                        type="text"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Enter specialties separated by commas"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Commission Tier (1-4)
+                        </label>
+                        <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                          <option value="1">Tier 1 (60%)</option>
+                          <option value="2">Tier 2 (65%)</option>
+                          <option value="3">Tier 3 (70%)</option>
+                          <option value="4">Tier 4 (75%)</option>
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Initial Status
+                        </label>
+                        <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                          <option value="pending">Pending</option>
+                          <option value="approved">Approved</option>
+                          <option value="needs_edits">Needs Edits</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Admin Notes (optional)
+                      </label>
+                      <textarea
+                        rows={3}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Enter any admin notes..."
+                      />
+                    </div>
+
+                    <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
+                      <h4 className="font-medium text-blue-900 mb-2">Profile Access</h4>
+                      <p className="text-blue-700 text-sm">
+                        This profile will be accessible to both admin and therapist roles:
+                      </p>
+                      <ul className="text-blue-700 text-sm mt-2 list-disc list-inside">
+                        <li>Admins can view and edit all profile information</li>
+                        <li>Therapists can view and edit their own profile</li>
+                        <li>Role-based permissions are enforced by Supabase RLS policies</li>
+                      </ul>
+                    </div>
+
+                    <div className="flex justify-end space-x-3">
+                      <Button variant="outline" type="button">
+                        Cancel
+                      </Button>
+                      <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                        Create Profile
+                      </Button>
+                    </div>
+                  </form>
+                </div>
               </div>
             )}
           </div>

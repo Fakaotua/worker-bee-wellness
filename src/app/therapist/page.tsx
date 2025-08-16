@@ -1,7 +1,5 @@
 'use client'
 
-import TherapistEventRequests from '@/components/TherapistEventRequests';
-import TherapistEarningsHistory from '@/components/TherapistEarningsHistory';
 import React, { useState, useEffect, useCallback } from 'react';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -226,9 +224,28 @@ function TherapistDashboard({ user }: { user: User }) {
   return <TherapistDashboardContent therapistData={therapistData} onSignOut={handleSignOut} />;
 }
 
-function TherapistProfileSetup({ user, onComplete }: { user: User; onComplete: () => void }) {
-  // …existing TherapistProfileSetup code…
-  // (This portion of the file remains unchanged, so it is omitted here for brevity.)
+function TherapistProfileSetup({ onComplete }: { user: User; onComplete: () => void }) {
+  return (
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6">
+        <h2 className="text-xl font-semibold mb-4">Complete Your Profile</h2>
+        <p className="text-gray-600 mb-4">
+          Welcome! Please complete your therapist profile to get started.
+        </p>
+        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
+          <p className="text-yellow-700 text-sm">
+            Profile setup feature is under development. Please contact support for assistance.
+          </p>
+        </div>
+        <button
+          onClick={onComplete}
+          className="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+        >
+          Continue to Dashboard
+        </button>
+      </div>
+    </div>
+  );
 }
 
 function TherapistDashboardContent({ therapistData, onSignOut }: { therapistData: Therapist; onSignOut: () => void }) {
@@ -355,11 +372,15 @@ function TherapistDashboardContent({ therapistData, onSignOut }: { therapistData
         {/* New sections outside the grid */}
         <div className="mt-8">
           <h2 className="text-lg font-semibold mb-2">Earnings History</h2>
-          <TherapistEarningsHistory therapistId={therapistData.id} />
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <p className="text-gray-600">Earnings history feature coming soon...</p>
+          </div>
         </div>
         <div className="mt-8">
           <h2 className="text-lg font-semibold mb-2">Event Requests</h2>
-          <TherapistEventRequests therapistId={therapistData.id} />
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <p className="text-gray-600">Event requests feature coming soon...</p>
+          </div>
         </div>
       </main>
     </div>
