@@ -77,7 +77,8 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
       if (onSuccess) onSuccess()
     } catch (error) {
       console.error('Error submitting event request:', error)
-      alert('Failed to submit event request. Please try again.')
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
+      alert(`Failed to submit event request: ${errorMessage}. Please ensure the database is properly configured.`)
     } finally {
       setIsSubmitting(false)
     }
