@@ -1,26 +1,38 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --wbw-blue: #1E40AF;
+  --wbw-yellow: #F59E0B;
+  --wbw-charcoal: #374151;
+  --wbw-light-blue: #60A5FA;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply bg-gray-50 text-gray-900;
+}
+
+.btn-primary {
+  @apply bg-wbw-blue hover:bg-blue-800 text-white font-medium py-2 px-4 rounded-lg transition-colors;
+}
+
+.btn-secondary {
+  @apply bg-wbw-yellow hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg transition-colors;
+}
+
+.btn-outline {
+  @apply border border-wbw-blue text-wbw-blue hover:bg-wbw-blue hover:text-white font-medium py-2 px-4 rounded-lg transition-colors;
+}
+
+.card {
+  @apply bg-white rounded-lg shadow-md p-6;
+}
+
+.input-field {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-wbw-blue focus:border-transparent;
+}
+
+.select-field {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-wbw-blue focus:border-transparent bg-white;
 }

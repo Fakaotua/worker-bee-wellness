@@ -1,133 +1,235 @@
 
+
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE IF NOT EXISTS therapists (
+CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id TEXT NOT NULL UNIQUE,
-    name TEXT NOT NULL,
-    bio TEXT NOT NULL CHECK (length(bio) >= 150),
-    profile_photo_url TEXT,
-    license_document_url TEXT,
-    insurance_document_url TEXT,
-    government_id_url TEXT,
-    specialties TEXT[] NOT NULL DEFAULT '{}',
-    status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected', 'needs_edits')),
-    admin_notes TEXT,
-    commission_tier INTEGER NOT NULL DEFAULT 1 CHECK (commission_tier BETWEEN 1 AND 4),
-    total_earnings DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    email TEXT NOT NULL UNIQUE,
+    role TEXT NOT NULL CHECK (role IN ('client', 'therapist', 'admin')),
+    first_name TEXT,
+    last_name TEXT,
+    phone TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS reviews (
+CREATE TABLE therapists (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    therapist_id UUID NOT NULL REFERENCES therapists(id) ON DELETE CASCADE,
-    client_name TEXT NOT NULL,
-    rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
-    comment TEXT NOT NULL,
-    is_flagged BOOLEAN NOT NULL DEFAULT FALSE,
-    is_approved BOOLEAN NOT NULL DEFAULT TRUE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    display_name TEXT NOT NULL,
+    bio TEXT,
+    photo_url TEXT,
+    specialties JSONB DEFAULT '[]'::jsonb,
+    service_area TEXT NOT NULL, -- City, State format
+    license_number TEXT,
+    years_experience INTEGER,
+    status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected', 'suspended')),
+    major_change_pending BOOLEAN DEFAULT FALSE,
+    base_commission_rate DECIMAL(5,2) DEFAULT 60.00,
+    commission_override DECIMAL(5,2),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(user_id)
 );
 
-CREATE TABLE IF NOT EXISTS earnings (
+CREATE TABLE therapist_documents (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     therapist_id UUID NOT NULL REFERENCES therapists(id) ON DELETE CASCADE,
-    amount DECIMAL(10,2) NOT NULL,
+    document_type TEXT NOT NULL CHECK (document_type IN ('license', 'insurance', 'identification')),
+    file_name TEXT NOT NULL,
+    file_path TEXT NOT NULL,
+    file_size INTEGER NOT NULL,
+    mime_type TEXT NOT NULL,
+    verified BOOLEAN DEFAULT FALSE,
+    uploaded_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    verified_at TIMESTAMP WITH TIME ZONE,
+    verified_by UUID REFERENCES users(id)
+);
+
+CREATE TABLE event_requests (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    client_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    location_text TEXT NOT NULL,
+    service_area TEXT NOT NULL,
+    desired_date DATE,
+    desired_time TIME,
+    duration_minutes INTEGER DEFAULT 60,
+    service_type TEXT DEFAULT 'massage',
+    notes TEXT,
+    status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'declined', 'completed', 'cancelled')),
+    accepted_by UUID REFERENCES therapists(id),
+    square_booking_url TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE event_notifications (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    event_request_id UUID NOT NULL REFERENCES event_requests(id) ON DELETE CASCADE,
+    therapist_id UUID NOT NULL REFERENCES therapists(id) ON DELETE CASCADE,
+    notification_type TEXT NOT NULL DEFAULT 'new_request',
+    delivered_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    read_at TIMESTAMP WITH TIME ZONE,
+    responded_at TIMESTAMP WITH TIME ZONE,
+    response TEXT CHECK (response IN ('accepted', 'declined')),
+    UNIQUE(event_request_id, therapist_id)
+);
+
+CREATE TABLE reviews (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    event_request_id UUID NOT NULL REFERENCES event_requests(id),
+    client_id UUID NOT NULL REFERENCES users(id),
+    therapist_id UUID NOT NULL REFERENCES therapists(id),
+    rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    review_text TEXT,
+    flagged BOOLEAN DEFAULT FALSE,
+    flag_reason TEXT,
+    flagged_by UUID REFERENCES users(id),
+    flagged_at TIMESTAMP WITH TIME ZONE,
+    admin_decision TEXT CHECK (admin_decision IN ('keep', 'remove')),
+    admin_decision_by UUID REFERENCES users(id),
+    admin_decision_at TIMESTAMP WITH TIME ZONE,
+    admin_decision_reason TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(event_request_id, client_id)
+);
+
+CREATE TABLE earnings (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    therapist_id UUID NOT NULL REFERENCES therapists(id),
+    event_request_id UUID NOT NULL REFERENCES event_requests(id),
+    service_fee_cents INTEGER NOT NULL,
     commission_rate DECIMAL(5,2) NOT NULL,
-    status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'completed')),
-    payout_date TIMESTAMP WITH TIME ZONE,
+    commission_cents INTEGER NOT NULL,
+    platform_fee_cents INTEGER NOT NULL,
+    tier_level INTEGER DEFAULT 1,
+    payout_status TEXT DEFAULT 'pending' CHECK (payout_status IN ('pending', 'processing', 'paid', 'cancelled')),
+    expected_payout_date DATE,
+    actual_payout_date DATE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(event_request_id, therapist_id)
+);
+
+CREATE TABLE commission_tiers (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tier_level INTEGER NOT NULL UNIQUE,
+    tier_name TEXT NOT NULL,
+    min_monthly_bookings INTEGER NOT NULL,
+    commission_rate DECIMAL(5,2) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_therapists_user_id ON therapists(user_id);
-CREATE INDEX IF NOT EXISTS idx_therapists_status ON therapists(status);
-CREATE INDEX IF NOT EXISTS idx_reviews_therapist_id ON reviews(therapist_id);
-CREATE INDEX IF NOT EXISTS idx_reviews_is_approved ON reviews(is_approved);
-CREATE INDEX IF NOT EXISTS idx_reviews_is_flagged ON reviews(is_flagged);
-CREATE INDEX IF NOT EXISTS idx_earnings_therapist_id ON earnings(therapist_id);
-CREATE INDEX IF NOT EXISTS idx_earnings_status ON earnings(status);
+CREATE TABLE admin_audit_log (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    admin_user_id UUID NOT NULL REFERENCES users(id),
+    action TEXT NOT NULL,
+    target_table TEXT NOT NULL,
+    target_id UUID NOT NULL,
+    old_values JSONB,
+    new_values JSONB,
+    reason TEXT,
+    ip_address INET,
+    user_agent TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
 
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
-END;
-$$ language 'plpgsql';
+CREATE TABLE notifications (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    type TEXT NOT NULL,
+    title TEXT NOT NULL,
+    message TEXT NOT NULL,
+    data JSONB DEFAULT '{}'::jsonb,
+    read_at TIMESTAMP WITH TIME ZONE,
+    expires_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
 
-CREATE TRIGGER update_therapists_updated_at 
-    BEFORE UPDATE ON therapists 
-    FOR EACH ROW 
-    EXECUTE FUNCTION update_updated_at_column();
+CREATE TABLE feature_flags (
+    key TEXT PRIMARY KEY,
+    enabled BOOLEAN DEFAULT FALSE,
+    description TEXT,
+    rollout_percentage INTEGER DEFAULT 0,
+    target_roles JSONB DEFAULT '[]'::jsonb,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
 
+INSERT INTO commission_tiers (tier_level, tier_name, min_monthly_bookings, commission_rate) VALUES
+(1, 'Bronze', 0, 60.00),
+(2, 'Silver', 5, 70.00),
+(3, 'Gold', 15, 80.00);
+
+INSERT INTO feature_flags (key, enabled, description) VALUES
+('corporate_packages', FALSE, 'Enable corporate booking packages'),
+('loyalty_program', FALSE, 'Enable client loyalty rewards program'),
+('instant_payouts', FALSE, 'Enable instant payout option for therapists'),
+('sms_notifications', TRUE, 'Enable SMS notifications'),
+('advanced_scheduling', FALSE, 'Enable advanced scheduling features');
+
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE therapists ENABLE ROW LEVEL SECURITY;
+ALTER TABLE therapist_documents ENABLE ROW LEVEL SECURITY;
+ALTER TABLE event_requests ENABLE ROW LEVEL SECURITY;
+ALTER TABLE event_notifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE earnings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Therapists can view own profile" ON therapists
-    FOR SELECT USING (auth.uid()::text = user_id);
+CREATE OR REPLACE FUNCTION auth.get_user_role()
+RETURNS TEXT AS $$
+DECLARE
+    user_role TEXT;
+BEGIN
+    SELECT role INTO user_role
+    FROM users
+    WHERE id = auth.uid();
+    RETURN COALESCE(user_role, 'anonymous');
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
-CREATE POLICY "Therapists can update own profile" ON therapists
-    FOR UPDATE USING (auth.uid()::text = user_id);
+CREATE POLICY "Users can view own profile" ON users
+    FOR SELECT USING (id = auth.uid());
 
-CREATE POLICY "Therapists can insert own profile" ON therapists
-    FOR INSERT WITH CHECK (auth.uid()::text = user_id);
+CREATE POLICY "Users can update own profile" ON users
+    FOR UPDATE USING (id = auth.uid());
 
-CREATE POLICY "Public can view approved therapists" ON therapists
-    FOR SELECT USING (status = 'approved');
-
-CREATE POLICY "Public can view approved reviews" ON reviews
-    FOR SELECT USING (is_approved = true);
-
-CREATE POLICY "Anyone can insert reviews" ON reviews
+CREATE POLICY "Allow user registration" ON users
     FOR INSERT WITH CHECK (true);
 
-CREATE POLICY "Therapists can view own earnings" ON earnings
+CREATE POLICY "Therapists can view own profile" ON therapists
+    FOR SELECT USING (user_id = auth.uid());
+
+CREATE POLICY "Clients can view approved therapists" ON therapists
     FOR SELECT USING (
-        therapist_id IN (
-            SELECT id FROM therapists WHERE user_id = auth.uid()::text
+        auth.get_user_role() = 'client' 
+        AND status = 'approved' 
+        AND major_change_pending = FALSE
+    );
+
+CREATE POLICY "Therapists can update own profile" ON therapists
+    FOR UPDATE USING (user_id = auth.uid());
+
+CREATE POLICY "Therapists can create own profile" ON therapists
+    FOR INSERT WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY "Clients can view own requests" ON event_requests
+    FOR SELECT USING (client_id = auth.uid());
+
+CREATE POLICY "Clients can create requests" ON event_requests
+    FOR INSERT WITH CHECK (client_id = auth.uid());
+
+CREATE POLICY "Therapists can view area requests" ON event_requests
+    FOR SELECT USING (
+        auth.get_user_role() = 'therapist'
+        AND service_area IN (
+            SELECT service_area 
+            FROM therapists 
+            WHERE user_id = auth.uid() 
+            AND status = 'approved'
         )
     );
 
-INSERT INTO therapists (user_id, name, bio, specialties, status, commission_tier, total_earnings) VALUES
-('sample-user-1', 'Sarah Johnson', 'Licensed massage therapist with over 8 years of experience specializing in deep tissue and Swedish massage. I am passionate about helping clients achieve relaxation and pain relief through therapeutic touch. My approach combines traditional techniques with modern wellness practices.', ARRAY['Deep Tissue', 'Swedish', 'Sports Massage'], 'approved', 2, 2500.00),
-('sample-user-2', 'Michael Chen', 'Certified therapeutic massage specialist focusing on injury recovery and chronic pain management. With a background in physical therapy, I provide targeted treatments that help clients return to their active lifestyles. I believe in personalized care for each individual.', ARRAY['Therapeutic', 'Injury Recovery', 'Trigger Point'], 'approved', 3, 4200.00),
-('sample-user-3', 'Emma Rodriguez', 'Holistic wellness practitioner offering relaxation and prenatal massage services. I create a calming environment where clients can unwind and reconnect with their bodies. My gentle approach is perfect for stress relief and overall wellness maintenance.', ARRAY['Relaxation', 'Prenatal', 'Hot Stone'], 'pending', 1, 800.00);
-
-CREATE TABLE IF NOT EXISTS public.event_requests (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  client_name TEXT NOT NULL,
-  client_email TEXT NOT NULL,
-  location_city TEXT NOT NULL,
-  location_state TEXT NOT NULL,
-  preferred_date DATE NOT NULL,
-  preferred_time TIME NOT NULL,
-  notes TEXT, -- additional notes (optional)
-  status TEXT NOT NULL DEFAULT 'pending', -- e.g. 'pending', 'responded', 'accepted'
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  responded_by UUID[] DEFAULT '{}'::UUID[], -- array of user IDs who responded (if any)
-  accepted_by UUID -- user ID who accepted the event (if any)
-);
-
-CREATE INDEX IF NOT EXISTS idx_event_requests_status ON event_requests(status);
-CREATE INDEX IF NOT EXISTS idx_event_requests_location ON event_requests(location_city, location_state);
-CREATE INDEX IF NOT EXISTS idx_event_requests_date ON event_requests(preferred_date);
-
-ALTER TABLE event_requests ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Anyone can create event requests" ON event_requests
-    FOR INSERT WITH CHECK (true);
-
-CREATE POLICY "Public can view event requests" ON event_requests
-    FOR SELECT USING (true);
-
-CREATE POLICY "Therapists can respond to events" ON event_requests
-    FOR UPDATE USING (true)
-    WITH CHECK (true);
-
-INSERT INTO reviews (therapist_id, client_name, rating, comment) VALUES
-((SELECT id FROM therapists WHERE name = 'Sarah Johnson'), 'Jennifer M.', 5, 'Amazing deep tissue massage! Sarah really knew how to work out all the knots in my shoulders. Highly recommend!'),
-((SELECT id FROM therapists WHERE name = 'Sarah Johnson'), 'David K.', 4, 'Great experience overall. Very professional and the massage was exactly what I needed after my workout.'),
-((SELECT id FROM therapists WHERE name = 'Michael Chen'), 'Lisa P.', 5, 'Michael helped me so much with my back pain. His therapeutic approach is exactly what I was looking for.'),
-((SELECT id FROM therapists WHERE name = 'Michael Chen'), 'Robert T.', 5, 'Excellent service! Very knowledgeable about injury recovery. I felt so much better after the session.');
+CREATE POLICY "Admins can view all" ON users FOR ALL USING (auth.get_user_role() = 'admin');
+CREATE POLICY "Admins can manage therapists" ON therapists FOR ALL USING (auth.get_user_role() = 'admin');
+CREATE POLICY "Admins can view all requests" ON event_requests FOR ALL USING (auth.get_user_role() = 'admin');

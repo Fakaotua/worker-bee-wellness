@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react'
 import { Calendar, Clock, MapPin, Send, User, Mail } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { supabase } from '@/lib/supabase'
+import { Button } from './ui/Button'
+import { createClient } from '../lib/supabase/client'
 
 interface EventBookingFormProps {
   onSuccess?: () => void
@@ -21,6 +21,7 @@ export default function EventBookingForm({ onSuccess }: EventBookingFormProps) {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const supabase = createClient()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

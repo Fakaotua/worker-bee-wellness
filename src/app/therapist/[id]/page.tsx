@@ -2,19 +2,37 @@
 
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
-import { supabase, Therapist } from '@/lib/supabase'
-import { Button } from '@/components/ui/button'
-import ReviewSystem from '@/components/ReviewSystem'
+import { createClient } from '../../../lib/supabase/client'
+import { Button } from '../../../components/ui/Button'
+import ReviewSystem from '../../../components/ReviewSystem'
 import { ArrowLeft, MapPin, Award, Clock } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { formatCurrency } from '@/lib/utils'
+
+interface Therapist {
+  id: string;
+  user_id: string;
+  display_name: string;
+  bio: string;
+  photo_url?: string;
+  specialties: string[];
+  service_area: string;
+  license_number?: string;
+  years_experience?: number;
+  status: 'pending' | 'approved' | 'rejected' | 'suspended';
+  major_change_pending: boolean;
+  base_commission_rate: number;
+  commission_override?: number;
+  created_at: string;
+  updated_at: string;
+}
 
 export default function TherapistProfilePage() {
   const params = useParams()
   const therapistId = params.id as string
   const [therapist, setTherapist] = useState<Therapist | null>(null)
   const [loading, setLoading] = useState(true)
+  const supabase = createClient()
 
   useEffect(() => {
     const fetchTherapist = async () => {
@@ -102,7 +120,7 @@ export default function TherapistProfilePage() {
               <div className="flex-shrink-0">
                 <div className="w-32 h-32 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
                   <span className="text-white text-4xl font-bold">
-                    {therapist.name.split(' ').map(n => n[0]).join('')}
+                    {therapist.display_name.split(' ').map(n => n[0]).join('')}
                   </span>
                 </div>
               </div>
@@ -110,7 +128,7 @@ export default function TherapistProfilePage() {
               <div className="flex-1">
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-4">
                   <div>
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">{therapist.name}</h1>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">{therapist.display_name}</h1>
                     <div className="flex items-center text-gray-600 mb-2">
                       <MapPin className="w-4 h-4 mr-1" />
                       <span>Licensed Massage Therapist</span>
@@ -155,13 +173,13 @@ export default function TherapistProfilePage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                   <div className="bg-blue-50 p-4 rounded-lg text-center">
                     <div className="text-2xl font-bold text-blue-600 mb-1">
-                      {formatCurrency(therapist.total_earnings)}
+                      $0.00
                     </div>
                     <div className="text-sm text-gray-600">Total Earnings</div>
                   </div>
                   <div className="bg-blue-50 p-4 rounded-lg text-center">
                     <div className="text-2xl font-bold text-blue-600 mb-1">
-                      Tier {therapist.commission_tier}
+                      Tier 1
                     </div>
                     <div className="text-sm text-gray-600">Commission Level</div>
                   </div>

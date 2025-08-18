@@ -1,16 +1,67 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { signInWithEmailAndPassword, onAuthStateChanged, User } from 'firebase/auth'
-import { auth } from '@/lib/firebase'
-import { supabase, Therapist, Review, EventRequest } from '@/lib/supabase'
-import { Button } from '@/components/ui/button'
+import { createClient } from '../../lib/supabase/client'
+import { Button } from '../../components/ui/Button'
 import { ArrowLeft, Check, X, Eye, Flag, MessageSquare, Calendar } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 
+interface Therapist {
+  id: string
+  user_id: string
+  display_name: string
+  bio: string
+  photo_url?: string
+  specialties: string[]
+  service_area: string
+  license_number?: string
+  years_experience?: number
+  status: 'pending' | 'approved' | 'rejected' | 'suspended'
+  major_change_pending: boolean
+  base_commission_rate: number
+  commission_override?: number
+  created_at: string
+  updated_at: string
+}
+
+interface Review {
+  id: string
+  event_request_id: string
+  client_id: string
+  therapist_id: string
+  rating: number
+  review_text?: string
+  flagged: boolean
+  flag_reason?: string
+  flagged_by?: string
+  flagged_at?: string
+  admin_decision?: 'keep' | 'remove'
+  admin_decision_by?: string
+  admin_decision_at?: string
+  admin_decision_reason?: string
+  created_at: string
+}
+
+interface EventRequest {
+  id: string
+  client_id: string
+  location_text: string
+  service_area: string
+  desired_date?: string
+  desired_time?: string
+  duration_minutes: number
+  service_type: string
+  notes?: string
+  status: 'pending' | 'accepted' | 'declined' | 'completed' | 'cancelled'
+  accepted_by?: string
+  square_booking_url?: string
+  created_at: string
+  updated_at: string
+}
+
 export default function AdminPage() {
-  const [, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -20,27 +71,45 @@ export default function AdminPage() {
   const [eventRequests, setEventRequests] = useState<EventRequest[]>([])
   const [activeTab, setActiveTab] = useState<'therapists' | 'reviews' | 'events' | 'create-profile'>('therapists')
   const [selectedTherapist, setSelectedTherapist] = useState<Therapist | null>(null)
+  const supabase = createClient()
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user)
-      setLoading(false)
-      if (user) {
-        setIsAuthenticated(true)
-        fetchTherapists()
-        fetchReviews()
-        fetchEventRequests()
-      }
-    })
-
-    return () => unsubscribe()
+    checkAuth()
   }, [])
+
+  const checkAuth = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data: userData } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', user.id)
+          .single()
+        
+        if (userData?.role === 'admin') {
+          setUser(user)
+          setIsAuthenticated(true)
+          fetchTherapists()
+          fetchReviews()
+          fetchEventRequests()
+        }
+      }
+    } catch (error) {
+      console.error('Auth check error:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const fetchTherapists = async () => {
     try {
       const { data, error } = await supabase
         .from('therapists')
-        .select('*')
+        .select(`
+          *,
+          users (first_name, last_name, email)
+        `)
         .order('created_at', { ascending: false })
       
       if (error) throw error
@@ -55,7 +124,7 @@ export default function AdminPage() {
       const { data, error } = await supabase
         .from('reviews')
         .select('*')
-        .eq('is_flagged', true)
+        .eq('flagged', true)
         .order('created_at', { ascending: false })
       
       if (error) throw error
@@ -82,20 +151,43 @@ export default function AdminPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      await signInWithEmailAndPassword(auth, email, password)
-    } catch (error) {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      })
+      
+      if (error) throw error
+      
+      if (data.user) {
+        const { data: userData } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', data.user.id)
+          .single()
+        
+        if (userData?.role === 'admin') {
+          setUser(data.user)
+          setIsAuthenticated(true)
+          fetchTherapists()
+          fetchReviews()
+          fetchEventRequests()
+        } else {
+          alert('Access denied. Admin privileges required.')
+          await supabase.auth.signOut()
+        }
+      }
+    } catch (error: any) {
       console.error('Login error:', error)
       alert('Login failed. Please check your credentials.')
     }
   }
 
-  const updateTherapistStatus = async (therapistId: string, status: 'approved' | 'rejected' | 'needs_edits', notes?: string) => {
+  const updateTherapistStatus = async (therapistId: string, status: 'approved' | 'rejected' | 'suspended', notes?: string) => {
     try {
       const { error } = await supabase
         .from('therapists')
         .update({ 
           status, 
-          admin_notes: notes,
           updated_at: new Date().toISOString()
         })
         .eq('id', therapistId)
@@ -238,7 +330,7 @@ export default function AdminPage() {
               <span className="text-sm text-gray-600">Admin Dashboard</span>
               <Button 
                 variant="outline" 
-                onClick={() => auth.signOut()}
+                onClick={() => supabase.auth.signOut()}
                 className="text-sm"
               >
                 Sign Out
@@ -314,7 +406,7 @@ export default function AdminPage() {
                     <div key={therapist.id} className="border border-gray-200 rounded-lg p-6">
                       <div className="flex justify-between items-start mb-4">
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900">{therapist.name}</h3>
+                          <h3 className="text-lg font-semibold text-gray-900">{therapist.display_name}</h3>
                           <p className="text-sm text-gray-600 mt-1">Applied on {therapist.created_at ? new Date(therapist.created_at).toLocaleDateString() : 'Unknown date'}</p>
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mt-2 ${
                             therapist.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
@@ -359,7 +451,7 @@ export default function AdminPage() {
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => updateTherapistStatus(therapist.id, 'needs_edits', 'Please update your documents')}
+                            onClick={() => updateTherapistStatus(therapist.id, 'rejected', 'Please update your documents')}
                             className="border-blue-300 text-blue-700 hover:bg-blue-50"
                           >
                             Request Edits
@@ -402,7 +494,7 @@ export default function AdminPage() {
                                 </span>
                               ))}
                             </div>
-                            <span className="ml-2 text-sm text-gray-600">by {review.client_name}</span>
+                            <span className="ml-2 text-sm text-gray-600">by Client</span>
                           </div>
                           <p className="text-sm text-gray-600">Posted on {new Date(review.created_at).toLocaleDateString()}</p>
                         </div>
@@ -412,7 +504,7 @@ export default function AdminPage() {
                       </div>
 
                       <div className="mb-4">
-                        <p className="text-gray-900">{review.comment}</p>
+                        <p className="text-gray-900">{review.review_text}</p>
                       </div>
 
                       <div className="flex space-x-3">
@@ -453,13 +545,13 @@ export default function AdminPage() {
                     <div key={eventRequest.id} className="border border-gray-200 rounded-lg p-6">
                       <div className="flex justify-between items-start mb-4">
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900">{eventRequest.client_name}</h3>
+                          <h3 className="text-lg font-semibold text-gray-900">Event Request</h3>
                           <p className="text-sm text-gray-600 mt-1">
-                            {eventRequest.client_email} • Requested on {new Date(eventRequest.created_at).toLocaleDateString()}
+                            Requested on {new Date(eventRequest.created_at).toLocaleDateString()}
                           </p>
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mt-2 ${
                             eventRequest.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                            eventRequest.status === 'responded' ? 'bg-blue-100 text-blue-800' :
+                            eventRequest.status === 'accepted' ? 'bg-blue-100 text-blue-800' :
                             'bg-green-100 text-green-800'
                           }`}>
                             {eventRequest.status.toUpperCase()}
@@ -470,12 +562,12 @@ export default function AdminPage() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
                           <p className="text-sm font-medium text-gray-700">Location</p>
-                          <p className="text-sm text-gray-600 mt-1">{eventRequest.location_city}, {eventRequest.location_state}</p>
+                          <p className="text-sm text-gray-600 mt-1">{eventRequest.location_text}</p>
                         </div>
                         <div>
                           <p className="text-sm font-medium text-gray-700">Preferred Date & Time</p>
                           <p className="text-sm text-gray-600 mt-1">
-                            {eventRequest.preferred_date} at {eventRequest.preferred_time}
+                            {eventRequest.desired_date} at {eventRequest.desired_time}
                           </p>
                         </div>
                       </div>
@@ -650,7 +742,7 @@ export default function AdminPage() {
               <div className="space-y-4">
                 <div>
                   <h4 className="font-medium text-gray-900">Name</h4>
-                  <p className="text-gray-600">{selectedTherapist.name}</p>
+                  <p className="text-gray-600">{selectedTherapist.display_name}</p>
                 </div>
 
                 <div>
@@ -669,30 +761,24 @@ export default function AdminPage() {
                     <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
                       <span className="text-sm">Massage License</span>
                       <span className="text-xs text-gray-500">
-                        {selectedTherapist.license_document_url ? 'Uploaded' : 'Not uploaded'}
+                        {'Not uploaded'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
                       <span className="text-sm">Insurance Document</span>
                       <span className="text-xs text-gray-500">
-                        {selectedTherapist.insurance_document_url ? 'Uploaded' : 'Not uploaded'}
+                        {'Not uploaded'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
                       <span className="text-sm">Government ID</span>
                       <span className="text-xs text-gray-500">
-                        {selectedTherapist.government_id_url ? 'Uploaded' : 'Not uploaded'}
+                        {'Not uploaded'}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {selectedTherapist.admin_notes && (
-                  <div>
-                    <h4 className="font-medium text-gray-900">Admin Notes</h4>
-                    <p className="text-gray-600">{selectedTherapist.admin_notes}</p>
-                  </div>
-                )}
               </div>
 
               <div className="flex justify-end space-x-3 mt-6 pt-6 border-t">

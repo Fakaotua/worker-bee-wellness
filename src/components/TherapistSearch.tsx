@@ -2,15 +2,34 @@
 
 import React, { useState, useEffect } from 'react'
 import { MapPin, Star, Clock, Search } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { supabase, Therapist } from '@/lib/supabase'
+import { Button } from './ui/Button'
+import { createClient } from '../lib/supabase/client'
 import Link from 'next/link'
+
+interface Therapist {
+  id: string;
+  user_id: string;
+  display_name: string;
+  bio: string;
+  photo_url?: string;
+  specialties: string[];
+  service_area: string;
+  license_number?: string;
+  years_experience?: number;
+  status: 'pending' | 'approved' | 'rejected' | 'suspended';
+  major_change_pending: boolean;
+  base_commission_rate: number;
+  commission_override?: number;
+  created_at: string;
+  updated_at: string;
+}
 
 export default function TherapistSearch() {
   const [location, setLocation] = useState<string>('')
   const [isLoadingLocation, setIsLoadingLocation] = useState(false)
   const [therapists, setTherapists] = useState<Therapist[]>([])
   const [loading, setLoading] = useState(true)
+  const supabase = createClient()
 
   useEffect(() => {
     fetchTherapists()
@@ -22,7 +41,8 @@ export default function TherapistSearch() {
         .from('therapists')
         .select('*')
         .eq('status', 'approved')
-        .order('total_earnings', { ascending: false })
+        .eq('major_change_pending', false)
+        .order('created_at', { ascending: false })
       
       if (error) throw error
       setTherapists(data || [])
@@ -32,30 +52,42 @@ export default function TherapistSearch() {
         setTherapists([
           {
             id: 'demo-1',
-            name: 'Sarah Johnson',
+            user_id: 'demo-user-1',
+            display_name: 'Sarah Johnson',
             bio: 'Licensed massage therapist with 8+ years experience specializing in deep tissue and Swedish massage.',
             specialties: ['Deep Tissue', 'Swedish', 'Sports Massage'],
+            service_area: 'Austin, TX',
             status: 'approved',
-            total_earnings: 15000,
-            location: 'Austin, TX'
+            major_change_pending: false,
+            base_commission_rate: 60,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
           },
           {
             id: 'demo-2',
-            name: 'Michael Chen',
+            user_id: 'demo-user-2',
+            display_name: 'Michael Chen',
             bio: 'Certified therapeutic massage specialist focusing on injury recovery and relaxation therapy.',
             specialties: ['Therapeutic', 'Hot Stone', 'Aromatherapy'],
+            service_area: 'Dallas, TX',
             status: 'approved',
-            total_earnings: 12500,
-            location: 'Dallas, TX'
+            major_change_pending: false,
+            base_commission_rate: 60,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
           },
           {
             id: 'demo-3',
-            name: 'Emily Rodriguez',
+            user_id: 'demo-user-3',
+            display_name: 'Emily Rodriguez',
             bio: 'Experienced prenatal and wellness massage therapist with holistic approach to healing.',
             specialties: ['Prenatal', 'Wellness', 'Reflexology'],
+            service_area: 'Houston, TX',
             status: 'approved',
-            total_earnings: 11000,
-            location: 'Houston, TX'
+            major_change_pending: false,
+            base_commission_rate: 60,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
           }
         ])
       }
@@ -156,10 +188,10 @@ export default function TherapistSearch() {
                 <div className="text-center mb-4">
                   <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
                     <span className="text-white text-2xl font-bold">
-                      {therapist.name.split(' ').map(n => n[0]).join('')}
+                      {therapist.display_name.split(' ').map(n => n[0]).join('')}
                     </span>
                   </div>
-                  <h4 className="text-lg font-semibold text-gray-900">{therapist.name}</h4>
+                  <h4 className="text-lg font-semibold text-gray-900">{therapist.display_name}</h4>
                   <div className="flex items-center justify-center mt-1">
                     <Star className="w-4 h-4 text-yellow-400 fill-current" />
                     <span className="text-sm text-gray-600 ml-1">Verified Professional</span>

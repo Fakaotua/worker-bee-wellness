@@ -3,32 +3,35 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.52.0",
-    "@types/uuid": "^10.0.0",
-    "clsx": "^2.1.1",
-    "firebase": "^12.0.0",
-    "lucide-react": "^0.525.0",
-    "next": "15.4.2",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "@headlessui/react": "^1.7.17",
+    "@heroicons/react": "^2.0.18",
+    "@supabase/ssr": "^0.1.0",
+    "@supabase/supabase-js": "^2.38.0",
+    "autoprefixer": "^10.4.21",
+    "clsx": "^2.0.0",
+    "date-fns": "^3.0.0",
+    "lucide-react": "^0.540.0",
+    "next": "^14.1.0",
+    "postcss": "^8.5.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.4.1",
     "tailwind-merge": "^3.3.1",
-    "uuid": "^11.1.0"
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.3.0",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.4.2",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.1.0"
   }
 }

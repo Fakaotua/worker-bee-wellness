@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { Mail, Phone, MapPin, Send, Clock } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '../../components/ui/Button'
 import Link from 'next/link'
 import Image from 'next/image'
 

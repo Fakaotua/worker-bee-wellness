@@ -1,13 +1,31 @@
 'use client'
 
 import React, { useState, useEffect, useCallback } from 'react'
-import { supabase, Review } from '@/lib/supabase'
-import { Button } from '@/components/ui/button'
+import { createClient } from '../lib/supabase/client'
+import { Button } from './ui/Button'
 import { Star, Flag, MessageSquare } from 'lucide-react'
 
 interface ReviewSystemProps {
   therapistId: string
   showAddReview?: boolean
+}
+
+interface Review {
+  id: string;
+  event_request_id: string;
+  client_id: string;
+  therapist_id: string;
+  rating: number;
+  review_text?: string;
+  flagged: boolean;
+  flag_reason?: string;
+  flagged_by?: string;
+  flagged_at?: string;
+  admin_decision?: 'keep' | 'remove';
+  admin_decision_by?: string;
+  admin_decision_at?: string;
+  admin_decision_reason?: string;
+  created_at: string;
 }
 
 export default function ReviewSystem({ therapistId, showAddReview = true }: ReviewSystemProps) {
@@ -19,6 +37,7 @@ export default function ReviewSystem({ therapistId, showAddReview = true }: Revi
     comment: '',
     clientName: ''
   })
+  const supabase = createClient()
 
   const fetchReviews = useCallback(async () => {
     try {
@@ -26,7 +45,7 @@ export default function ReviewSystem({ therapistId, showAddReview = true }: Revi
         .from('reviews')
         .select('*')
         .eq('therapist_id', therapistId)
-        .eq('is_approved', true)
+        .eq('flagged', false)
         .order('created_at', { ascending: false })
       
       if (error) throw error
@@ -55,11 +74,11 @@ export default function ReviewSystem({ therapistId, showAddReview = true }: Revi
         .from('reviews')
         .insert({
           therapist_id: therapistId,
-          client_name: newReview.clientName,
+          client_id: 'demo-client',
+          event_request_id: 'demo-event',
           rating: newReview.rating,
-          comment: newReview.comment,
-          is_flagged: false,
-          is_approved: true,
+          review_text: newReview.comment,
+          flagged: false,
           created_at: new Date().toISOString()
         })
       
@@ -78,7 +97,7 @@ export default function ReviewSystem({ therapistId, showAddReview = true }: Revi
     try {
       const { error } = await supabase
         .from('reviews')
-        .update({ is_flagged: true })
+        .update({ flagged: true })
         .eq('id', reviewId)
       
       if (error) throw error
@@ -227,7 +246,7 @@ export default function ReviewSystem({ therapistId, showAddReview = true }: Revi
                 <div>
                   <div className="flex items-center mb-1">
                     {renderStars(review.rating)}
-                    <span className="ml-2 font-medium text-gray-900">{review.client_name}</span>
+                    <span className="ml-2 font-medium text-gray-900">Client</span>
                   </div>
                   <p className="text-sm text-gray-600">
                     {new Date(review.created_at).toLocaleDateString()}
@@ -244,7 +263,7 @@ export default function ReviewSystem({ therapistId, showAddReview = true }: Revi
                 </Button>
               </div>
               
-              <p className="text-gray-700">{review.comment}</p>
+              <p className="text-gray-700">{review.review_text}</p>
             </div>
           ))
         )}

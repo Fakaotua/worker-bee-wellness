@@ -1,12 +1,33 @@
 'use client'
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import { supabase, Therapist } from '@/lib/supabase';
-import { Button } from '@/components/ui/button';
+import { createClient } from '../../lib/supabase/client';
+import { Button } from '../../components/ui/Button';
 import { ArrowLeft, Upload, DollarSign, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
+
+interface User {
+  id: string;
+  email?: string;
+}
+
+interface Therapist {
+  id: string;
+  user_id: string;
+  display_name: string;
+  bio: string;
+  photo_url?: string;
+  specialties: string[];
+  service_area: string;
+  license_number?: string;
+  years_experience?: number;
+  status: 'pending' | 'approved' | 'rejected' | 'suspended';
+  major_change_pending: boolean;
+  base_commission_rate: number;
+  commission_override?: number;
+  created_at: string;
+  updated_at: string;
+}
 
 export default function TherapistPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -16,14 +37,24 @@ export default function TherapistPage() {
   const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const [authLoading, setAuthLoading] = useState(false);
+  const supabase = createClient();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
-    return () => unsubscribe();
+    checkAuth();
   }, []);
+
+  const checkAuth = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUser(user);
+      }
+    } catch (error) {
+      console.error('Auth check error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,13 +62,27 @@ export default function TherapistPage() {
 
     try {
       if (isLogin) {
-        await signInWithEmailAndPassword(auth, email, password);
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+        if (error) throw error;
+        if (data.user) {
+          setUser(data.user);
+        }
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password
+        });
+        if (error) throw error;
+        if (data.user) {
+          setUser(data.user);
+        }
       }
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error('Auth error:', error);
-      alert(error instanceof Error ? error.message : 'Authentication failed');
+      alert(error.message || 'Authentication failed');
     } finally {
       setAuthLoading(false);
     }
@@ -175,10 +220,11 @@ export default function TherapistPage() {
 function TherapistDashboard({ user }: { user: User }) {
   const [therapistData, setTherapistData] = useState<Therapist | null>(null);
   const [loading, setLoading] = useState(true);
+  const supabase = createClient();
 
   const fetchTherapistData = useCallback(async () => {
     try {
-      const { data, error } = await supabase.from('therapists').select('*').eq('user_id', user.uid).single();
+      const { data, error } = await supabase.from('therapists').select('*').eq('user_id', user.id).single();
 
       if (error && error.code !== 'PGRST116') {
         console.error('Error fetching therapist data:', error);
@@ -200,7 +246,7 @@ function TherapistDashboard({ user }: { user: User }) {
 
   const handleSignOut = async () => {
     try {
-      await auth.signOut();
+      await supabase.auth.signOut();
     } catch (error) {
       console.error('Sign out error:', error);
     }
@@ -306,7 +352,7 @@ function TherapistDashboardContent({ therapistData, onSignOut }: { therapistData
 
               <div className="space-y-4">
                 <div>
-                  <h3 className="font-medium text-gray-900">{therapistData.name}</h3>
+                  <h3 className="font-medium text-gray-900">{therapistData.display_name}</h3>
                   <p className="text-gray-600 text-sm mt-1">{therapistData.bio}</p>
                 </div>
 
@@ -323,12 +369,6 @@ function TherapistDashboardContent({ therapistData, onSignOut }: { therapistData
                   </div>
                 )}
 
-                {therapistData.admin_notes && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
-                    <h4 className="font-medium text-yellow-800 mb-2">Admin Notes</h4>
-                    <p className="text-yellow-700 text-sm">{therapistData.admin_notes}</p>
-                  </div>
-                )}
               </div>
             </div>
           </div>
@@ -340,19 +380,19 @@ function TherapistDashboardContent({ therapistData, onSignOut }: { therapistData
 
               <div className="space-y-4">
                 <div className="text-center">
-                  <p className="text-3xl font-bold text-green-600">${therapistData.total_earnings?.toFixed(2) || '0.00'}</p>
+                  <p className="text-3xl font-bold text-green-600">$0.00</p>
                   <p className="text-gray-600 text-sm">Total Earnings</p>
                 </div>
 
                 <div className="border-t pt-4">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm text-gray-600">Commission Tier</span>
-                    <span className="font-semibold">Tier {therapistData.commission_tier}</span>
+                    <span className="font-semibold">Tier 1</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">Current Rate</span>
                     <span className="font-semibold text-green-600">
-                      {therapistData.commission_tier ? 60 + (therapistData.commission_tier - 1) * 5 : 60}%
+                      60%
                     </span>
                   </div>
                 </div>
@@ -362,7 +402,7 @@ function TherapistDashboardContent({ therapistData, onSignOut }: { therapistData
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div className="bg-blue-600 h-2 rounded-full" style={{ width: '25%' }}></div>
                   </div>
-                  <p className="text-xs text-gray-600 mt-1">${therapistData.total_earnings || 0} / $1,000 to next tier</p>
+                  <p className="text-xs text-gray-600 mt-1">$0 / $1,000 to next tier</p>
                 </div>
               </div>
             </div>
