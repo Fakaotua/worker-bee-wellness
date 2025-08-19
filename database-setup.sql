@@ -1,5 +1,4 @@
 
-
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE users (
@@ -20,7 +19,7 @@ CREATE TABLE therapists (
     bio TEXT,
     photo_url TEXT,
     specialties JSONB DEFAULT '[]'::jsonb,
-    service_area TEXT NOT NULL, -- City, State format
+    service_area TEXT NOT NULL,
     license_number TEXT,
     years_experience INTEGER,
     status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected', 'suspended')),
