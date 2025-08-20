@@ -92,7 +92,7 @@ export default function BookPage() {
             Book a Massage Session
           </h1>
           <p className="text-lg text-gray-600">
-            Tell us your preferences and we'll connect you with qualified therapists in your area.
+            Tell us your preferences and we&apos;ll connect you with qualified therapists in your area.
           </p>
         </div>
 
@@ -220,7 +220,7 @@ export default function BookPage() {
               <h3 className="font-medium text-wbw-blue mb-2">What happens next?</h3>
               <ul className="text-sm text-gray-600 space-y-1">
                 <li>• Qualified therapists in your area will be notified</li>
-                <li>• You'll receive responses within 24 hours</li>
+                <li>• You&apos;ll receive responses within 24 hours</li>
                 <li>• Choose your preferred therapist and complete booking</li>
                 <li>• Enjoy your professional massage session</li>
               </ul>

@@ -337,7 +337,7 @@ export default function AdminDashboard() {
 
                           {review.review_text && (
                             <div className="mb-4">
-                              <p className="text-gray-900 italic">"{review.review_text}"</p>
+                              <p className="text-gray-900 italic">&quot;{review.review_text}&quot;</p>
                             </div>
                           )}
 

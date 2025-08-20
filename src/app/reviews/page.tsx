@@ -1,13 +1,21 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import React, { useState, useEffect } from 'react'
 import { Star, MessageSquare } from 'lucide-react'
-import { supabase, Review, Therapist } from '@/lib/supabase'
+import { createClient } from '../../lib/supabase/client'
 import Link from 'next/link'
 import Image from 'next/image'
 
-interface ReviewWithTherapist extends Review {
-  therapist: Therapist
+interface ReviewWithTherapist {
+  id: string
+  rating: number
+  created_at: string
+  client_name: string
+  comment: string
+  therapist_id: string
+  therapist?: { name?: string }
 }
 
 export default function ReviewsPage() {
@@ -20,6 +28,7 @@ export default function ReviewsPage() {
 
   const fetchReviews = async () => {
     try {
+      const supabase = createClient()
       const { data, error } = await supabase
         .from('reviews')
         .select(`
@@ -29,9 +38,8 @@ export default function ReviewsPage() {
         .eq('is_approved', true)
         .order('created_at', { ascending: false })
         .limit(20)
-      
       if (error) throw error
-      setReviews(data || [])
+      setReviews((data as unknown as ReviewWithTherapist[]) || [])
     } catch (error) {
       console.error('Error fetching reviews:', error)
     } finally {

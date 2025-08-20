@@ -287,7 +287,7 @@ export default function TherapistOnboarding() {
                   <h3 className="font-medium text-wbw-blue mb-2">Next Steps</h3>
                   <ul className="text-sm text-gray-600 space-y-1">
                     <li>• Your profile will be reviewed by our admin team</li>
-                    <li>• You'll be notified once approved (usually within 24-48 hours)</li>
+                    <li>• You&apos;ll be notified once approved (usually within 24-48 hours)</li>
                     <li>• After approval, you can start receiving booking requests</li>
                     <li>• Upload required documents in your dashboard</li>
                   </ul>

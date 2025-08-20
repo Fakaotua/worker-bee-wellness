@@ -160,7 +160,7 @@ export default function TherapistDashboard() {
                   <div>
                     <h3 className="font-semibold text-yellow-800">Profile Under Review</h3>
                     <p className="text-yellow-700 text-sm">
-                      Your therapist profile is being reviewed by our admin team. You'll be notified once approved.
+                      Your therapist profile is being reviewed by our admin team. You&apos;ll be notified once approved.
                     </p>
                   </div>
                 </div>
@@ -248,7 +248,7 @@ export default function TherapistDashboard() {
                 {profile.status !== 'approved' ? (
                   <div className="text-center py-8">
                     <p className="text-gray-500">
-                      You'll see booking requests here once your profile is approved.
+                      You&apos;ll see booking requests here once your profile is approved.
                     </p>
                   </div>
                 ) : loading ? (
